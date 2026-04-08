@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>個人事業主の法人成り検討ツール</title>
+  <style>
+    :root {
+      --bg: linear-gradient(180deg, #eef6ff 0%, #f7fbff 24%, #f8fbfd 100%);
+      --surface: rgba(255,255,255,0.92);
+      --surface-strong: #ffffff;
+      --line: #d8e8fb;
+      --line-strong: #bfd7f4;
+      --text: #1f2a37;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-2: #60a5fa;
+      --primary-soft: #eff6ff;
+      --primary-soft-2: #dbeafe;
+      --good: #0f766e;
+      --good-soft: #ccfbf1;
+      --warn: #b45309;
+      --warn-soft: #ffedd5;
+      --bad: #b91c1c;
+      --bad-soft: #fee2e2;
+      --shadow-soft: 0 12px 28px rgba(37, 99, 235, 0.08);
+      --shadow-card: 0 10px 24px rgba(15, 23, 42, 0.06);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+    body { line-height: 1.6; }
+    .container { width: min(1480px, 96vw); margin: 22px auto 56px; }
+
+    .hero {
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.18) 22%, transparent 42%),
+        linear-gradient(135deg, #dbeafe 0%, #eff6ff 42%, #f8fbff 100%);
+      border: 1px solid var(--line-strong);
+      border-radius: 30px;
+      padding: 28px 28px 22px;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: auto -120px -120px auto;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(96,165,250,0.22) 0%, rgba(96,165,250,0) 68%);
+      pointer-events: none;
+    }
+    .hero-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(191,215,244,0.9);
+      color: var(--primary);
+      font-size: 0.84rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 2.3vw, 2.4rem);
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+      color: #163a7a;
+    }
+    .hero p {
+      margin: 0;
+      max-width: 960px;
+      color: #35517a;
+    }
+    .hero .sub {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      color: #587193;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(360px, 520px) minmax(540px, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel,
+    .card {
+      background: var(--surface);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-card);
+    }
+
+    .panel {
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(240,247,255,0.96) 100%);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    .panel-header .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .panel-header h2 {
+      margin: 0 0 4px;
+      font-size: 1.1rem;
+      color: #173f84;
+    }
+    .panel-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .panel-body { padding: 16px; }
+
+    details.section {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,0.88);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    details.section[open] {
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.05);
+    }
+    details.section summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      font-weight: 800;
+      position: relative;
+      background: linear-gradient(180deg, #ffffff 0%, #f6fbff 100%);
+      color: #18428a;
+    }
+    details.section summary::-webkit-details-marker { display: none; }
+    details.section summary::after {
+      content: "＋";
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+    details.section[open] summary::after { content: "－"; }
+    .section-body { padding: 0 14px 16px; }
+
+    .grid-2, .grid-3, .grid-4 {
+      display: grid;
+      gap: 12px;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .field label {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #244268;
+    }
+    .hint {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 2px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid #cfe0f5;
+      border-radius: 14px;
+      padding: 11px 13px;
+      font: inherit;
+      background: #ffffff;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: #7db3f7;
+      box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.16);
+      background: #fcfeff;
+    }
+    .field textarea { min-height: 84px; resize: vertical; }
+    .field .suffix {
+      position: relative;
+    }
+    .field .suffix span {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7ea5;
+      font-size: 0.84rem;
+      pointer-events: none;
+      font-weight: 700;
+    }
+    .field .suffix input { padding-right: 38px; }
+
+    .inline-checks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      margin-top: 10px;
+    }
+    .check-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.92);
+      font-size: 0.92rem;
+      color: #3d5578;
+    }
+    .check-chip input { accent-color: var(--primary); }
+
+    .btn {
+      appearance: none;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      padding: 11px 15px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s ease;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn.primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+    }
+    .btn.secondary {
+      background: #fff;
+      color: #2a4468;
+      border-color: var(--line-strong);
+    }
+    .btn.soft {
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+      color: var(--primary);
+      border-color: #cfe0ff;
+    }
+    .btn.warn {
+      background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+      color: var(--warn);
+      border-color: #fed7aa;
+    }
+
+    .result-shell {
+      display: grid;
+      gap: 14px;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 12px;
+    }
+    .card { padding: 16px; }
+    .card h3, .card h4 { margin: 0 0 10px; color: #1b437d; }
+    .card p { margin: 0; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .badge.good { background: var(--good-soft); color: var(--good); }
+    .badge.warn { background: var(--warn-soft); color: var(--warn); }
+    .badge.bad { background: var(--bad-soft); color: var(--bad); }
+    .badge.info { background: var(--primary-soft); color: var(--primary); }
+
+    .big-number {
+      font-size: clamp(1.6rem, 2.1vw, 2.2rem);
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      margin-top: 6px;
+      color: #163a7a;
+    }
+    .muted { color: var(--muted); }
+    .tiny { font-size: 0.8rem; color: var(--muted); }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.94rem;
+    }
+    .comparison-table th,
+    .comparison-table td {
+      border-bottom: 1px solid #e6effa;
+      padding: 10px 8px;
+      text-align: right;
+      vertical-align: middle;
+    }
+    .comparison-table th:first-child,
+    .comparison-table td:first-child { text-align: left; width: 38%; }
+    .comparison-table thead th {
+      background: #f6fbff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      color: #47658f;
+    }
+    .row-good { background: rgba(16, 185, 129, 0.06); }
+    .row-bad { background: rgba(239, 68, 68, 0.06); }
+
+    .bars {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 120px 1fr 120px;
+      gap: 12px;
+      align-items: center;
+    }
+    .bar-track {
+      background: #e8f1fb;
+      border-radius: 999px;
+      height: 16px;
+      overflow: hidden;
+      position: relative;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #93c5fd, #3b82f6);
+    }
+    .bar-fill.good {
+      background: linear-gradient(90deg, #6ee7b7, #10b981);
+    }
+    .bar-fill.warn {
+      background: linear-gradient(90deg, #fdba74, #f59e0b);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 14px;
+    }
+    .callout {
+      border-left: 4px solid var(--primary);
+      background: linear-gradient(180deg, #f6fbff 0%, #ffffff 100%);
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: #245099;
+    }
+    .list {
+      margin: 0;
+      padding-left: 18px;
+    }
+    .list li { margin: 6px 0; }
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .pill-box {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: linear-gradient(180deg, #ffffff 0%, #f9fcff 100%);
+    }
+    .pill-box .k { font-size: 0.82rem; color: var(--muted); }
+    .pill-box .v { font-weight: 800; margin-top: 4px; color: #173e7f; }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .score-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: linear-gradient(180deg, #ffffff 0%, #f9fcff 100%);
+    }
+    .score-card .title { font-size: 0.86rem; color: var(--muted); }
+    .score-card .state { margin-top: 6px; font-weight: 800; }
+
+    .report-box {
+      white-space: pre-wrap;
+      background: linear-gradient(180deg, #fbfdff 0%, #f7fbff 100%);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      font-size: 0.94rem;
+    }
+
+    .sticky-footer {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      position: sticky;
+      bottom: 12px;
+      padding-top: 12px;
+      background: linear-gradient(180deg, rgba(247,251,255,0) 0%, rgba(247,251,255,0.95) 35%, rgba(247,251,255,1) 100%);
+    }
+
+    .note-box {
+      font-size: 0.88rem;
+      color: var(--muted);
+      background: linear-gradient(180deg, #fcfeff 0%, #f6fbff 100%);
+      border: 1px dashed #c9ddf7;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 1180px) {
+      .layout, .summary-grid, .two-col, .score-grid, .matrix { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .container { width: min(100vw, 100%); margin: 0 0 40px; }
+      .hero { border-radius: 0 0 24px 24px; margin-bottom: 12px; }
+      .layout { grid-template-columns: 1fr; }
+      .panel, .card { border-radius: 18px; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 1fr; }
+      .comparison-table { font-size: 0.88rem; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .hero, .left-panel, .sticky-footer, .top-actions { display: none !important; }
+      .container { width: 100%; margin: 0; }
+      .layout { display: block; }
+      .panel, .card { box-shadow: none; border: 1px solid #999; background: #fff; }
+      .result-only-print { display: block !important; }
+      .no-print { display: none !important; }
+      .panel-header { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <div class="hero-top">面談用シミュレーション</div>
+      <h1>個人事業主の法人成り検討ツール</h1>
+      <p>税務だけでなく、社保・事務負担・消費税・信用力・利益留保まで含めて、法人成りの是非を整理するための面談用ツールです。</p>
+      <div class="sub">この版は「意思決定の漏れを防ぐ」ことを目的にした概算版です。最終判断は個別事情・最新料率・最新税制の精査を前提にしてください。</div>
+      <div class="top-actions no-print">
+        <button class="btn primary" id="calcBtnTop">試算する</button>
+        <button class="btn secondary" id="sampleBtnTop">サンプル読込</button>
+        <button class="btn secondary" id="resetBtnTop">初期化</button>
+        <button class="btn soft" id="copyReportBtnTop">所見をコピー</button>
+        <button class="btn warn" onclick="window.print()">印刷</button>
+      </div>
+    </section>
+
+    <div class="layout">
+      <section class="panel left-panel">
+        <div class="panel-header">
+          <div class="eyebrow">入力エリア</div>
+          <h2>検討条件</h2>
+          <p>面談しながら埋められるよう、論点を順番に整理しています。</p>
+        </div>
+        <div class="panel-body">
+          <details class="section" open>
+            <summary>① この検討の目的</summary>
+            <div class="section-body">
+              <div class="inline-checks">
+                <label class="check-chip"><input type="checkbox" id="goalTax" checked> 節税を重視</label>
+                <label class="check-chip"><input type="checkbox" id="goalCash"> 手取り・資金繰りを重視</label>
+                <label class="check-chip"><input type="checkbox" id="goalCredit"> 信用力・融資を重視</label>
+                <label class="check-chip"><input type="checkbox" id="goalRetention"> 利益留保を重視</label>
+                <label class="check-chip"><input type="checkbox" id="goalRetirement"> 退職金設計を重視</label>
+                <label class="check-chip"><input type="checkbox" id="goalFamily"> 家族給与を検討したい</label>
+              </div>
+              <div class="field">
+                <label for="memoPurpose">補足メモ</label>
+                <textarea id="memoPurpose" placeholder="例：来期から採用を考えている／融資先から法人化を勧められている／節税だけが目的ではない"></textarea>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" open>
+            <summary>② 現状（個人事業）</summary>
+            <div class="section-body">
+              <div class="grid-2">
+                <div class="field">
+                  <label for="annualSales">年商</label>
+                  <div class="suffix"><input type="text" id="annualSales" class="num-input" data-format="int" inputmode="numeric" value="18,000,000" /><span>円</span></div>
+                  <div class="hint">税込・税抜どちらでも可。ただし以後は統一してください。</div>
+                </div>
+                <div class="field">
+                  <label for="businessProfit">事業利益（事業主報酬控除前）</label>
+                  <div class="suffix"><input type="text" id="businessProfit" class="num-input" data-format="int" inputmode="numeric" value="7,000,000" /><span>円</span></div>
+                  <div class="hint">個人事業の青色控除前・事業主個人の生活費控除前の利益を想定。</div>
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="blueDeduction">青色申告特別控除</label>
+                  <select id="blueDeduction">
+                    <option value="650000" selected>65万円</option>
+                    <option value="550000">55万円</option>
+                    <option value="100000">10万円</option>
+                    <option value="0">なし</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="currentOtherDeduction">その他の所得控除（概算）</label>
+                  <div class="suffix"><input type="text" id="currentOtherDeduction" class="num-input" data-format="int" inputmode="numeric" value="0" /><span>円</span></div>
+                  <div class="hint">生命保険料控除・小規模共済・扶養控除などの概算。</div>
+                </div>
+              </div>
+
+              <div class="grid-3">
+                <div class="field">
+                  <label for="currentNHI">現状の国保・国年等（年額）</label>
+                  <div class="suffix"><input type="text" id="currentNHI" class="num-input" data-format="int" inputmode="numeric" value="900,000" /><span>円</span></div>
+                </div>
+                <div class="field">
+                  <label for="currentBizTax">個人事業税（年額）</label>
+                  <div class="suffix"><input type="text" id="currentBizTax" class="num-input" data-format="int" inputmode="numeric" value="120,000" /><span>円</span></div>
+                </div>
+                <div class="field">
+                  <label for="currentResidentPerCapita">住民税均等割等（年額）</label>
+                  <div class="suffix"><input type="text" id="currentResidentPerCapita" class="num-input" data-format="int" inputmode="numeric" value="5,000" /><span>円</span></div>
+                </div>
+              </div>
+
+              <div class="inline-checks">
+                <label class="check-chip"><input type="checkbox" id="invoiceRegistered" checked> 現在インボイス登録あり</label>
+                <label class="check-chip"><input type="checkbox" id="alreadySocialInsurance"> 現在すでに社保の影響が大きい</label>
+                <label class="check-chip"><input type="checkbox" id="fiveEmployeesPersonal"> 個人事業で5人以上の常用従業員がいる</label>
+                <label class="check-chip"><input type="checkbox" id="professionalService"> 士業・法律会計系に該当</label>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" open>
+            <summary>③ 法人成り後の想定</summary>
+            <div class="section-body">
+              <div class="grid-3">
+                <div class="field">
+                  <label for="officerMonthlySalary">役員報酬（月額）</label>
+                  <div class="suffix"><input type="text" id="officerMonthlySalary" class="num-input" data-format="int" inputmode="numeric" value="450,000" /><span>円</span></div>
+                </div>
+                <div class="field">
+                  <label for="officerBonus">役員賞与（年額）</label>
+                  <div class="suffix"><input type="text" id="officerBonus" class="num-input" data-format="int" inputmode="numeric" value="0" /><span>円</span></div>
+                </div>
+                <div class="field">
+                  <label for="familySalary">家族への給与等（年額）</label>
+                  <div class="suffix"><input type="text" id="familySalary" class="num-input" data-format="int" inputmode="numeric" value="0" /><span>円</span></div>
+                  <div class="hint">この版では会社損金要素として主に反映。</div>
+                </div>
+              </div>
+
+              <div class="grid-4">
+                <div class="field">
+                  <label for="companySocRate">会社負担社保率</label>
+                  <div class="suffix"><input type="text" id="companySocRate" class="num-input" data-format="decimal1" inputmode="decimal" value="15.0" /><span>％</span></div>
+                  <div class="hint">概算入力。協会けんぽ・年齢等で調整。</div>
+                </div>
+                <div class="field">
+                  <label for="personalSocRate">本人負担社保率</label>
+                  <div class="suffix"><input type="text" id="personalSocRate" class="num-input" data-format="decimal1" inputmode="decimal" value="15.0" /><span>％</span></div>
+                  <div class="hint">概算入力。</div>
+                </div>
+                <div class="field">
+                  <label for="corpFixedTax">法人住民税均等割等</label>
+                  <div class="suffix"><input type="text" id="corpFixedTax" class="num-input" data-format="int" inputmode="numeric" value="70,000" /><span>円</span></div>
+                </div>
+                <div class="field">
+                  <label for="corpExtraAdminCost">法人維持コスト（年額）</label>
+                  <div class="suffix"><input type="text" id="corpExtraAdminCost" class="num-input" data-format="int" inputmode="numeric" value="200,000" /><span>円</span></div>
+                  <div class="hint">申告・記帳・法務・労務など増分。</div>
+                </div>
+              </div>
+
+              <div class="grid-3">
+                <div class="field">
+                  <label for="corpTaxMode">法人税等の概算方法</label>
+                  <select id="corpTaxMode">
+                    <option value="auto" selected>自動（中小法人の概算目安）</option>
+                    <option value="fixed">固定率で計算</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="corpFixedRate">固定率（固定率モード時）</label>
+                  <div class="suffix"><input type="text" id="corpFixedRate" class="num-input" data-format="decimal1" inputmode="decimal" value="23.0" /><span>％</span></div>
+                </div>
+                <div class="field">
+                  <label for="setupCost">初年度の一時コスト</label>
+                  <div class="suffix"><input type="text" id="setupCost" class="num-input" data-format="int" inputmode="numeric" value="300,000" /><span>円</span></div>
+                </div>
+              </div>
+
+              <div class="inline-checks">
+                <label class="check-chip"><input type="checkbox" id="needSalaryStability" checked> 役員報酬は原則固定で運用する</label>
+                <label class="check-chip"><input type="checkbox" id="includeSetupInYear1" checked> 初年度比較に設立コストを含める</label>
+                <label class="check-chip"><input type="checkbox" id="considerRetention" checked> 会社に利益を残す前提で考える</label>
+              </div>
+            </div>
+          </details>
+
+          <details class="section">
+            <summary>④ 消費税・制度上の注意点</summary>
+            <div class="section-body">
+              <div class="grid-2">
+                <div class="field">
+                  <label for="taxableSalesBase">基準期間・特定期間の課税売上高の意識</label>
+                  <select id="taxableSalesBase">
+                    <option value="under">1,000万円以下の想定</option>
+                    <option value="over" selected>1,000万円超の想定</option>
+                    <option value="unknown">未確認</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="capitalAmount">資本金</label>
+                  <div class="suffix"><input type="text" id="capitalAmount" class="num-input" data-format="int" inputmode="numeric" value="1,000,000" /><span>円</span></div>
+                </div>
+              </div>
+
+              <div class="inline-checks">
+                <label class="check-chip"><input type="checkbox" id="specialNewCorpRisk"> 特定新規設立法人等の検討が必要</label>
+                <label class="check-chip"><input type="checkbox" id="consumptionTaxTiming"> 消費税のタイミングを慎重に見たい</label>
+                <label class="check-chip"><input type="checkbox" id="majorClientsNeedCorp"> 主要取引先が法人を好む</label>
+              </div>
+
+              <div class="note-box">消費税は設立時期・資本金・特定期間・グループ関係で結論が変わりやすいため、この欄は「要精査フラグ」を立てるためのものです。</div>
+            </div>
+          </details>
+
+          <details class="section">
+            <summary>⑤ 定性評価（スコア判定）</summary>
+            <div class="section-body">
+              <div class="inline-checks">
+                <label class="check-chip"><input type="checkbox" id="needCredit"> 対外信用を上げたい</label>
+                <label class="check-chip"><input type="checkbox" id="needFinancing"> 融資・補助・許認可で法人有利</label>
+                <label class="check-chip"><input type="checkbox" id="needHiring"> 採用面で法人化が有利</label>
+                <label class="check-chip"><input type="checkbox" id="needRetentionScore"> 利益を社内に残したい</label>
+                <label class="check-chip"><input type="checkbox" id="needRetirement"> 将来の退職金設計をしたい</label>
+                <label class="check-chip"><input type="checkbox" id="needSocialSecurity"> 老後保障・社保整備を重視</label>
+                <label class="check-chip"><input type="checkbox" id="avoidAdminBurden"> 事務負担は増やしたくない</label>
+                <label class="check-chip"><input type="checkbox" id="needFlexibility"> 利益変動が大きく、固定報酬が悩ましい</label>
+              </div>
+            </div>
+          </details>
+
+          <div class="sticky-footer no-print">
+            <button class="btn primary" id="calcBtnBottom">試算する</button>
+            <button class="btn secondary" id="sampleBtnBottom">サンプル読込</button>
+            <button class="btn secondary" id="resetBtnBottom">初期化</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="result-shell">
+        <div class="summary-grid">
+          <div class="card">
+            <div id="recommendBadge" class="badge info">判定準備中</div>
+            <h3 id="recommendTitle">まずは入力してください</h3>
+            <p id="recommendLead" class="muted">税務・社保・事務負担・定性要素をまとめて見て、法人成りの是非を判定します。</p>
+            <div class="big-number" id="cashDiffDisplay">－</div>
+            <div class="tiny" id="cashDiffCaption">年間キャッシュ差額（法人 − 個人、初年度ベース）</div>
+          </div>
+
+          <div class="card">
+            <h4>個人事業の概算手取り</h4>
+            <div class="big-number" id="soleTakeHome">－</div>
+            <div class="tiny">所得税・住民税・個人事業税・現状社保等控除後</div>
+          </div>
+
+          <div class="card">
+            <h4>法人化後の概算</h4>
+            <div class="big-number" id="corpTotalOutcome">－</div>
+            <div class="tiny">本人手取り + 会社残り利益 − 初年度一時コスト</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>比較サマリー</h3>
+          <div class="matrix" id="matrixSummary"></div>
+          <div class="bars" id="barsArea"></div>
+        </div>
+
+        <div class="card">
+          <h3>比較明細</h3>
+          <div style="overflow:auto; max-height: 540px;">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>項目</th>
+                  <th>個人事業</th>
+                  <th>法人成り後</th>
+                  <th>差額（法人成り−個人）</th>
+                </tr>
+              </thead>
+              <tbody id="comparisonBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <h3>論点別判定</h3>
+            <div class="score-grid" id="scoreGrid"></div>
+            <div class="callout" id="blindSpotCallout" style="margin-top:14px;">
+              判定待ちです。
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>実行チェックリスト</h3>
+            <ul class="list" id="actionChecklist"></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>面談用コメント</h3>
+          <div class="report-box" id="reportText">ここに所見が表示されます。</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const fmt = new Intl.NumberFormat('ja-JP');
+
+    function yen(v) {
+      if (!isFinite(v)) return '－';
+      const sign = v < 0 ? '▲' : '';
+      return sign + fmt.format(Math.round(Math.abs(v))) + '円';
+    }
+
+    function cleanNumericString(value, mode = 'int') {
+      let v = String(value ?? '').replace(/,/g, '').replace(/[^
+\d.-]/g, '');
+      if (mode === 'decimal1') {
+        v = v.replace(/(\..*)\./g, '$1');
+        const parts = v.split('.');
+        if (parts.length > 1) parts[1] = parts[1].slice(0, 1);
+        v = parts.join('.');
+      } else {
+        v = v.replace(/\./g, '');
+      }
+      return v;
+    }
+
+    function formatRawNumberString(raw, mode = 'int') {
+      if (!raw || raw === '-' || raw === '.' || raw === '-.') return raw;
+      const negative = raw.startsWith('-');
+      const normalized = negative ? raw.slice(1) : raw;
+
+      if (mode === 'decimal1') {
+        const parts = normalized.split('.');
+        const integerPart = (parts[0] || '0').replace(/^0+(?=\d)/, '');
+        const formattedInteger = integerPart ? fmt.format(Number(integerPart)) : '0';
+        const decimalPart = parts[1] ?? null;
+        return (negative ? '-' : '') + formattedInteger + (decimalPart !== null ? '.' + decimalPart : '');
+      }
+
+      const integerPart = normalized.replace(/^0+(?=\d)/, '');
+      const formattedInteger = integerPart ? fmt.format(Number(integerPart)) : '0';
+      return (negative ? '-' : '') + formattedInteger;
+    }
+
+    function countMeaningfulChars(str, endIndex, mode = 'int') {
+      const target = str.slice(0, endIndex);
+      const regex = mode === 'decimal1' ? /[0-9.\-]/g : /[0-9\-]/g;
+      const matches = target.match(regex);
+      return matches ? matches.length : 0;
+    }
+
+    function findCaretFromMeaningfulChars(str, count, mode = 'int') {
+      if (count <= 0) return 0;
+      const regex = mode === 'decimal1' ? /[0-9.\-]/ : /[0-9\-]/;
+      let seen = 0;
+      for (let i = 0; i < str.length; i++) {
+        if (regex.test(str[i])) {
+          seen++;
+          if (seen >= count) return i + 1;
+        }
+      }
+      return str.length;
+    }
+
+    function formatNumericInput(el) {
+      const mode = el.dataset.format || 'int';
+      const original = el.value;
+      const caret = el.selectionStart ?? original.length;
+      const meaningfulBefore = countMeaningfulChars(original, caret, mode);
+      const cleaned = cleanNumericString(original, mode);
+      const formatted = formatRawNumberString(cleaned, mode);
+      el.value = formatted;
+      const newCaret = findCaretFromMeaningfulChars(formatted, meaningfulBefore, mode);
+      try { el.setSelectionRange(newCaret, newCaret); } catch (e) {}
+    }
+
+    function setNumValue(id, value, mode = 'int') {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const raw = mode === 'decimal1' ? String(value) : String(Math.round(Number(value || 0)));
+      el.value = formatRawNumberString(cleanNumericString(raw, mode), mode);
+    }
+
+    function num(id) {
+      const el = document.getElementById(id);
+      if (!el) return 0;
+      const n = parseFloat(String(el.value).replace(/,/g, ''));
+      return isNaN(n) ? 0 : n;
+    }
+
+    function checked(id) {
+      return !!document.getElementById(id).checked;
+    }
+
+    function salaryDeduction(salary) {
+      if (salary <= 0) return 0;
+      if (salary <= 1900000) return 650000;
+      if (salary <= 3600000) return salary * 0.3 + 80000;
+      if (salary <= 6600000) return salary * 0.2 + 440000;
+      if (salary <= 8500000) return salary * 0.1 + 1100000;
+      return 1950000;
+    }
+
+    function basicDeduction2026(totalIncome) {
+      if (totalIncome <= 1320000) return 950000;
+      if (totalIncome <= 3360000) return 880000;
+      if (totalIncome <= 4890000) return 680000;
+      if (totalIncome <= 6550000) return 630000;
+      if (totalIncome <= 23500000) return 580000;
+      if (totalIncome <= 24000000) return 480000;
+      if (totalIncome <= 24500000) return 320000;
+      if (totalIncome <= 25000000) return 160000;
+      return 0;
+    }
+
+    function incomeTaxCore(taxable) {
+      const x = Math.max(0, Math.floor(taxable / 1000) * 1000);
+      const table = [
+        { upTo: 1949000, rate: 0.05, deduction: 0 },
+        { upTo: 3299000, rate: 0.10, deduction: 97500 },
+        { upTo: 6949000, rate: 0.20, deduction: 427500 },
+        { upTo: 8999000, rate: 0.23, deduction: 636000 },
+        { upTo: 17999000, rate: 0.33, deduction: 1536000 },
+        { upTo: 39999000, rate: 0.40, deduction: 2796000 },
+        { upTo: Infinity, rate: 0.45, deduction: 4796000 }
+      ];
+      const row = table.find(r => x <= r.upTo);
+      return Math.max(0, x * row.rate - row.deduction) * 1.021;
+    }
+
+    function residentTaxApprox(taxable, perCapita) {
+      return Math.max(0, taxable) * 0.10 + Math.max(0, perCapita);
+    }
+
+    function corporateTaxApprox(profit, mode, fixedRate) {
+      const p = Math.max(0, profit);
+      if (mode === 'fixed') return p * (fixedRate / 100);
+      if (p <= 8000000) return p * 0.21;
+      return 8000000 * 0.21 + (p - 8000000) * 0.33;
+    }
+
+    function pickState(score) {
+      if (score >= 2) return { label: '有利', cls: 'good' };
+      if (score <= -2) return { label: '不利', cls: 'bad' };
+      return { label: '拮抗', cls: 'warn' };
+    }
+
+    function pushMatrix(title, value, parent) {
+      const div = document.createElement('div');
+      div.className = 'pill-box';
+      div.innerHTML = `<div class="k">${title}</div><div class="v">${value}</div>`;
+      parent.appendChild(div);
+    }
+
+    function addRow(label, sole, corp, tbody, emphasize = false) {
+      const tr = document.createElement('tr');
+      const diff = corp - sole;
+      if (emphasize) tr.className = diff >= 0 ? 'row-good' : 'row-bad';
+      tr.innerHTML = `
+        <td>${label}</td>
+        <td>${yen(sole)}</td>
+        <td>${yen(corp)}</td>
+        <td>${yen(diff)}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function currentSocialInsuranceFlag() {
+      return checked('alreadySocialInsurance') || (checked('fiveEmployeesPersonal') && checked('professionalService'));
+    }
+
+    function calculate() {
+      const annualSales = num('annualSales');
+      const businessProfit = num('businessProfit');
+      const blueDeduction = num('blueDeduction');
+      const currentOtherDeduction = num('currentOtherDeduction');
+      const currentNHI = num('currentNHI');
+      const currentBizTax = num('currentBizTax');
+      const currentResidentPerCapita = num('currentResidentPerCapita');
+
+      const officerSalaryAnnual = num('officerMonthlySalary') * 12 + num('officerBonus');
+      const familySalary = num('familySalary');
+      const companySocRate = num('companySocRate') / 100;
+      const personalSocRate = num('personalSocRate') / 100;
+      const corpFixedTax = num('corpFixedTax');
+      const corpExtraAdminCost = num('corpExtraAdminCost');
+      const corpTaxMode = document.getElementById('corpTaxMode').value;
+      const corpFixedRate = num('corpFixedRate');
+      const setupCost = checked('includeSetupInYear1') ? num('setupCost') : 0;
+      const currentHasSocialInsurance = currentSocialInsuranceFlag();
+
+      const soleBusinessIncome = Math.max(0, businessProfit - blueDeduction);
+      const soleBasicDeduction = basicDeduction2026(soleBusinessIncome);
+      const soleTaxableIncome = Math.max(0, soleBusinessIncome - soleBasicDeduction - currentOtherDeduction);
+      const soleIncomeTax = incomeTaxCore(soleTaxableIncome);
+      const soleResidentTaxable = Math.max(0, soleBusinessIncome - 430000 - currentOtherDeduction);
+      const soleResidentTax = residentTaxApprox(soleResidentTaxable, currentResidentPerCapita);
+      const soleTakeHome = businessProfit - soleIncomeTax - soleResidentTax - currentBizTax - currentNHI;
+
+      const companySocial = officerSalaryAnnual * companySocRate;
+      const personalSocial = officerSalaryAnnual * personalSocRate;
+      const corpProfitBeforeTax = businessProfit - officerSalaryAnnual - familySalary - companySocial - corpExtraAdminCost;
+      const corpTax = corporateTaxApprox(corpProfitBeforeTax, corpTaxMode, corpFixedRate);
+      const corpAfterTaxProfit = corpProfitBeforeTax - corpTax - corpFixedTax;
+
+      const salaryDed = salaryDeduction(officerSalaryAnnual);
+      const salaryIncome = Math.max(0, officerSalaryAnnual - salaryDed);
+      const corpBasicDeduction = basicDeduction2026(salaryIncome);
+      const corpPersonalTaxable = Math.max(0, salaryIncome - corpBasicDeduction - currentOtherDeduction - personalSocial);
+      const corpPersonalIncomeTax = incomeTaxCore(corpPersonalTaxable);
+      const corpPersonalResidentTaxable = Math.max(0, salaryIncome - 430000 - currentOtherDeduction - personalSocial);
+      const corpPersonalResidentTax = residentTaxApprox(corpPersonalResidentTaxable, currentResidentPerCapita);
+      const corpPersonalTakeHome = officerSalaryAnnual - personalSocial - corpPersonalIncomeTax - corpPersonalResidentTax;
+      const corpTotalOutcome = corpPersonalTakeHome + corpAfterTaxProfit - setupCost;
+      const corpYear2Outcome = corpPersonalTakeHome + corpAfterTaxProfit;
+
+      const diffYear1 = corpTotalOutcome - soleTakeHome;
+      const diffYear2 = corpYear2Outcome - soleTakeHome;
+
+      let taxScore = 0;
+      if (diffYear2 > 500000) taxScore += 2;
+      else if (diffYear2 > 100000) taxScore += 1;
+      else if (diffYear2 < -500000) taxScore -= 2;
+      else if (diffYear2 < -100000) taxScore -= 1;
+
+      let socialScore = 0;
+      const socialDiff = (companySocial + personalSocial) - currentNHI;
+      if (currentHasSocialInsurance) socialScore += 1;
+      if (socialDiff > 500000) socialScore -= 2;
+      else if (socialDiff > 150000) socialScore -= 1;
+      else if (socialDiff < -200000) socialScore += 1;
+      if (checked('needSocialSecurity') || checked('goalRetention')) socialScore += 1;
+
+      let adminScore = 0;
+      if (corpExtraAdminCost >= 300000) adminScore -= 1;
+      if (checked('avoidAdminBurden')) adminScore -= 2;
+      if (!checked('needSalaryStability') || checked('needFlexibility')) adminScore -= 1;
+
+      let creditScore = 0;
+      if (checked('majorClientsNeedCorp')) creditScore += 2;
+      if (checked('needCredit')) creditScore += 1;
+      if (checked('needFinancing')) creditScore += 2;
+      if (checked('needHiring')) creditScore += 1;
+      if (checked('goalCredit')) creditScore += 1;
+
+      let strategyScore = 0;
+      if (checked('needRetentionScore') || checked('goalRetention') || checked('considerRetention')) strategyScore += 2;
+      if (checked('needRetirement') || checked('goalRetirement')) strategyScore += 1;
+      if (checked('goalFamily') && familySalary > 0) strategyScore += 1;
+
+      let consumptionScore = 0;
+      const taxableSalesBase = document.getElementById('taxableSalesBase').value;
+      if (taxableSalesBase === 'over') consumptionScore -= 1;
+      if (checked('consumptionTaxTiming')) consumptionScore -= 1;
+      if (checked('specialNewCorpRisk')) consumptionScore -= 2;
+      if (taxableSalesBase === 'unknown') consumptionScore -= 1;
+      if (checked('invoiceRegistered')) consumptionScore -= 1;
+
+      const totalScore = taxScore + socialScore + adminScore + creditScore + strategyScore + consumptionScore;
+
+      let recommendation = '結論保留';
+      let badgeClass = 'warn';
+      let lead = '結論を急がず、まず消費税・社保・役員報酬設計の精査を行うべきです。';
+
+      if (totalScore >= 4 && diffYear2 >= -200000) {
+        recommendation = '法人成りを前向きに推奨';
+        badgeClass = 'good';
+        lead = '単年節税だけでなく、信用力・利益留保・制度設計の幅を踏まえると、法人化に進む合理性があります。';
+      } else if (totalScore >= 1 && diffYear2 >= -500000) {
+        recommendation = '今期末または時期を見て検討';
+        badgeClass = 'info';
+        lead = '方向性としては法人化余地がありますが、役員報酬額・消費税のタイミング・社保負担の設計で結論が動きます。';
+      } else if (diffYear2 < -500000 && creditScore <= 1 && strategyScore <= 1) {
+        recommendation = '当面は個人維持が有力';
+        badgeClass = 'bad';
+        lead = '現状では社保・維持コスト増に対して、法人化の見返りが小さい可能性があります。';
+      }
+
+      if (checked('specialNewCorpRisk') || taxableSalesBase === 'unknown') {
+        recommendation = '消費税論点の精査が先';
+        badgeClass = 'warn';
+        lead = '法人成り時期の設定で結論が変わるおそれがあります。消費税の判定を先に詰めてください。';
+      }
+
+      document.getElementById('recommendBadge').className = 'badge ' + badgeClass;
+      document.getElementById('recommendBadge').textContent = recommendation;
+      document.getElementById('recommendTitle').textContent = recommendation;
+      document.getElementById('recommendLead').textContent = lead;
+      document.getElementById('cashDiffDisplay').textContent = yen(diffYear1);
+      document.getElementById('cashDiffCaption').textContent = '年間キャッシュ差額（法人 − 個人、初年度ベース） / 2年目差額 ' + yen(diffYear2);
+      document.getElementById('soleTakeHome').textContent = yen(soleTakeHome);
+      document.getElementById('corpTotalOutcome').textContent = yen(corpTotalOutcome);
+
+      const matrix = document.getElementById('matrixSummary');
+      matrix.innerHTML = '';
+      pushMatrix('年商', yen(annualSales), matrix);
+      pushMatrix('個人の課税所得（概算）', yen(soleTaxableIncome), matrix);
+      pushMatrix('法人の税引前利益', yen(corpProfitBeforeTax), matrix);
+      pushMatrix('会社負担社保', yen(companySocial), matrix);
+      pushMatrix('本人負担社保', yen(personalSocial), matrix);
+      pushMatrix('法人税等（概算）', yen(corpTax + corpFixedTax), matrix);
+      pushMatrix('設立初年度コスト', yen(setupCost), matrix);
+      pushMatrix('2年目差額', yen(diffYear2), matrix);
+      pushMatrix('総合スコア', totalScore + '点', matrix);
+
+      const bars = document.getElementById('barsArea');
+      bars.innerHTML = '';
+      const maxBar = Math.max(Math.abs(soleTakeHome), Math.abs(corpTotalOutcome), Math.abs(corpYear2Outcome), 1);
+      const items = [
+        { label: '個人手取り', value: soleTakeHome, cls: '' },
+        { label: '法人初年度', value: corpTotalOutcome, cls: diffYear1 >= 0 ? 'good' : 'warn' },
+        { label: '法人2年目', value: corpYear2Outcome, cls: diffYear2 >= 0 ? 'good' : 'warn' }
+      ];
+      items.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'bar-row';
+        row.innerHTML = `
+          <div><strong>${item.label}</strong></div>
+          <div class="bar-track"><div class="bar-fill ${item.cls}" style="width:${Math.max(4, Math.abs(item.value) / maxBar * 100)}%"></div></div>
+          <div style="text-align:right; font-weight:800; color:#173e7f;">${yen(item.value)}</div>
+        `;
+        bars.appendChild(row);
+      });
+
+      const tbody = document.getElementById('comparisonBody');
+      tbody.innerHTML = '';
+      addRow('事業利益 / 原資', businessProfit, businessProfit, tbody);
+      addRow('所得税（本人）', -soleIncomeTax, -corpPersonalIncomeTax, tbody);
+      addRow('住民税（本人）', -soleResidentTax, -corpPersonalResidentTax, tbody);
+      addRow('個人事業税', -currentBizTax, 0, tbody);
+      addRow('現状社保等 / 本人社保', -currentNHI, -personalSocial, tbody);
+      addRow('役員報酬', 0, officerSalaryAnnual, tbody);
+      addRow('会社負担社保', 0, -companySocial, tbody);
+      addRow('家族給与等', 0, -familySalary, tbody);
+      addRow('法人維持コスト', 0, -corpExtraAdminCost, tbody);
+      addRow('法人税等（均等割含む）', 0, -(corpTax + corpFixedTax), tbody);
+      addRow('会社に残る利益', 0, corpAfterTaxProfit, tbody);
+      addRow('初年度一時コスト', 0, -setupCost, tbody, true);
+      addRow('最終キャッシュ', soleTakeHome, corpTotalOutcome, tbody, true);
+
+      const scoreGrid = document.getElementById('scoreGrid');
+      scoreGrid.innerHTML = '';
+      const scores = [
+        { title: '税務・手取り', score: taxScore },
+        { title: '社保', score: socialScore },
+        { title: '事務負担', score: adminScore },
+        { title: '信用力', score: creditScore },
+        { title: '中長期設計', score: strategyScore },
+        { title: '消費税論点', score: consumptionScore }
+      ];
+      scores.forEach(s => {
+        const state = pickState(s.score);
+        const el = document.createElement('div');
+        el.className = 'score-card';
+        el.innerHTML = `<div class="title">${s.title}</div><div class="state" style="color:var(--${state.cls === 'good' ? 'good' : state.cls === 'bad' ? 'bad' : 'warn'});">${state.label}（${s.score > 0 ? '+' : ''}${s.score}）</div>`;
+        scoreGrid.appendChild(el);
+      });
+
+      const blind = [];
+      if (diffYear2 < 0) blind.push('単年の節税効果だけを見ると不利でも、信用力・利益留保・退職金設計まで含めると評価が変わる可能性があります。');
+      if (socialDiff > 300000) blind.push('社保の会社負担が重く、ここを税務メリットが吸収できていない可能性があります。');
+      if (!currentHasSocialInsurance) blind.push('現状は国保・国年ベースで見ています。法人化で社保の質が変わる点は、負担増だけでなく制度設計の違いとして説明が必要です。');
+      if (checked('needFlexibility')) blind.push('利益変動が大きいのに役員報酬を高く固定すると、法人側の赤字リスクが高まります。');
+      if (checked('invoiceRegistered') || checked('consumptionTaxTiming') || checked('specialNewCorpRisk')) blind.push('消費税は設立時期次第で結論が動きやすい論点です。税額差だけで決めないでください。');
+      if (corpAfterTaxProfit < 0) blind.push('法人化後の会社利益が赤字見込みです。役員報酬額や維持コストの再設計が必要です。');
+      document.getElementById('blindSpotCallout').textContent = blind.length ? blind.join(' ') : '大きな盲点は現時点では少ないものの、最終判断前に消費税・社保料率・役員報酬設計は確認してください。';
+
+      const checklist = document.getElementById('actionChecklist');
+      checklist.innerHTML = '';
+      const actions = [
+        '法人成りの目的を確認し、「節税」だけでなく、信用力・利益留保・承継・社保整備の優先順位を明文化する。',
+        '役員報酬を月額ベースで決め、利益変動との整合を確認する。',
+        '個人の青色控除喪失と、法人側の均等割・維持コストを比較する。',
+        '法人設立後に必要な税務届出（法人設立届・青色申告承認申請・給与支払事務所等の開設届等）を洗い出す。',
+        '社保の新規適用・資格取得・算定基礎の流れを確認する。',
+        '消費税について、設立時期・資本金・特定期間・グループ関係の有無を確認する。',
+        '個人事業資産・負債・契約・借入の移し方を整理する。'
+      ];
+      if (familySalary > 0) actions.push('家族給与の金額・業務実態・支給根拠を整理する。');
+      if (checked('needRetirement') || checked('goalRetirement')) actions.push('退職金設計を見据えた法人化かどうかを確認する。');
+      if (checked('majorClientsNeedCorp') || checked('needCredit')) actions.push('取引先・金融機関への見せ方（法人化の効果）を整理する。');
+      actions.forEach(a => {
+        const li = document.createElement('li');
+        li.textContent = a;
+        checklist.appendChild(li);
+      });
+
+      const reasons = [];
+      if (diffYear1 >= 0) reasons.push('初年度ベースでも概算キャッシュ差はプラスです。');
+      else reasons.push('初年度は設立コストもあり、概算キャッシュ差はマイナスです。');
+      if (diffYear2 >= 0) reasons.push('一時コストを除く2年目ベースでは法人化の負担感は相対的に軽くなります。');
+      else reasons.push('2年目ベースでも、社保・維持コストを吸収しきれていません。');
+      if (creditScore >= 2) reasons.push('信用力・融資・採用等の非税務メリットは比較的強いです。');
+      if (strategyScore >= 2) reasons.push('利益留保や退職金設計など、中長期では法人の器が活きる余地があります。');
+      if (consumptionScore <= -2) reasons.push('一方で、消費税論点が強い注意事項です。時期の誤りで不利になるおそれがあります。');
+      if (adminScore <= -2) reasons.push('事務負担増を許容できるかが大きなボトルネックです。');
+
+      const purposeMemo = document.getElementById('memoPurpose').value.trim();
+      const report = [];
+      report.push('【総合判断】');
+      report.push(recommendation);
+      report.push('');
+      report.push('【結論の要旨】');
+      report.push(lead);
+      report.push(...reasons.map(r => '・' + r));
+      report.push('');
+      report.push('【数値の見え方】');
+      report.push('・個人事業の概算手取り：' + yen(soleTakeHome));
+      report.push('・法人化後の概算（初年度）：' + yen(corpTotalOutcome));
+      report.push('・法人化後の概算（2年目）：' + yen(corpYear2Outcome));
+      report.push('・初年度差額：' + yen(diffYear1));
+      report.push('・2年目差額：' + yen(diffYear2));
+      report.push('');
+      report.push('【面談で必ず触れるべき論点】');
+      blind.forEach(b => report.push('・' + b));
+      if (!blind.length) report.push('・大きな盲点は少ないが、消費税・社保料率・役員報酬設計は個別精査が必要。');
+      report.push('');
+      report.push('【次のアクション】');
+      actions.slice(0, 5).forEach(a => report.push('・' + a));
+      if (purposeMemo) {
+        report.push('');
+        report.push('【補足メモ】');
+        report.push(purposeMemo);
+      }
+      document.getElementById('reportText').textContent = report.join('\n');
+    }
+
+    function loadSample() {
+      const sample = {
+        annualSales: 22000000,
+        businessProfit: 8500000,
+        blueDeduction: '650000',
+        currentOtherDeduction: 300000,
+        currentNHI: 1050000,
+        currentBizTax: 180000,
+        currentResidentPerCapita: 5000,
+        invoiceRegistered: true,
+        alreadySocialInsurance: false,
+        fiveEmployeesPersonal: false,
+        professionalService: false,
+        officerMonthlySalary: 500000,
+        officerBonus: 0,
+        familySalary: 0,
+        companySocRate: 15.0,
+        personalSocRate: 15.0,
+        corpFixedTax: 70000,
+        corpExtraAdminCost: 220000,
+        corpTaxMode: 'auto',
+        corpFixedRate: 23.0,
+        setupCost: 300000,
+        needSalaryStability: true,
+        includeSetupInYear1: true,
+        considerRetention: true,
+        taxableSalesBase: 'over',
+        capitalAmount: 1000000,
+        specialNewCorpRisk: false,
+        consumptionTaxTiming: true,
+        majorClientsNeedCorp: true,
+        needCredit: true,
+        needFinancing: true,
+        needHiring: false,
+        needRetentionScore: true,
+        needRetirement: true,
+        needSocialSecurity: true,
+        avoidAdminBurden: false,
+        needFlexibility: false,
+        goalTax: true,
+        goalCash: true,
+        goalCredit: true,
+        goalRetention: true,
+        goalRetirement: true,
+        goalFamily: false,
+        memoPurpose: '金融機関との対話や採用面も含めて検討したい。節税だけでなく、会社に利益を残せるかを確認したい。'
+      };
+
+      Object.entries(sample).forEach(([key, value]) => {
+        const el = document.getElementById(key);
+        if (!el) return;
+        if (el.type === 'checkbox') {
+          el.checked = !!value;
+        } else if (el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
+          el.value = value;
+        } else if (el.classList.contains('num-input')) {
+          const mode = el.dataset.format || 'int';
+          setNumValue(key, value, mode);
+        } else {
+          el.value = value;
+        }
+      });
+      calculate();
+    }
+
+    function resetForm() {
+      document.querySelectorAll('input').forEach(el => {
+        if (el.type === 'checkbox') el.checked = false;
+      });
+      document.querySelectorAll('textarea').forEach(el => el.value = '');
+
+      setNumValue('annualSales', 18000000);
+      setNumValue('businessProfit', 7000000);
+      document.getElementById('blueDeduction').value = '650000';
+      setNumValue('currentOtherDeduction', 0);
+      setNumValue('currentNHI', 900000);
+      setNumValue('currentBizTax', 120000);
+      setNumValue('currentResidentPerCapita', 5000);
+      setNumValue('officerMonthlySalary', 450000);
+      setNumValue('officerBonus', 0);
+      setNumValue('familySalary', 0);
+      setNumValue('companySocRate', 15.0, 'decimal1');
+      setNumValue('personalSocRate', 15.0, 'decimal1');
+      setNumValue('corpFixedTax', 70000);
+      setNumValue('corpExtraAdminCost', 200000);
+      document.getElementById('corpTaxMode').value = 'auto';
+      setNumValue('corpFixedRate', 23.0, 'decimal1');
+      setNumValue('setupCost', 300000);
+      document.getElementById('taxableSalesBase').value = 'over';
+      setNumValue('capitalAmount', 1000000);
+
+      document.getElementById('goalTax').checked = true;
+      document.getElementById('needSalaryStability').checked = true;
+      document.getElementById('includeSetupInYear1').checked = true;
+      document.getElementById('considerRetention').checked = true;
+      document.getElementById('invoiceRegistered').checked = true;
+      calculate();
+    }
+
+    function copyReport() {
+      const text = document.getElementById('reportText').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('面談用コメントをコピーしました。');
+      }).catch(() => {
+        alert('コピーに失敗しました。');
+      });
+    }
+
+    document.getElementById('calcBtnTop').addEventListener('click', calculate);
+    document.getElementById('calcBtnBottom').addEventListener('click', calculate);
+    document.getElementById('sampleBtnTop').addEventListener('click', loadSample);
+    document.getElementById('sampleBtnBottom').addEventListener('click', loadSample);
+    document.getElementById('resetBtnTop').addEventListener('click', resetForm);
+    document.getElementById('resetBtnBottom').addEventListener('click', resetForm);
+    document.getElementById('copyReportBtnTop').addEventListener('click', copyReport);
+
+    document.querySelectorAll('.num-input').forEach(el => {
+      el.addEventListener('input', () => {
+        formatNumericInput(el);
+        calculate();
+      });
+      el.addEventListener('blur', () => formatNumericInput(el));
+    });
+
+    document.querySelectorAll('select, textarea').forEach(el => {
+      el.addEventListener('change', calculate);
+      el.addEventListener('input', calculate);
+    });
+
+    document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+      el.addEventListener('change', calculate);
+    });
+
+    calculate();
+  </script>
+</body>
+</html>
