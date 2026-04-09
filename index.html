@@ -507,7 +507,7 @@
               <p id="recommendLead" class="muted">税務・社保・消費税・事務負担・定性要素をまとめて見て、法人成りの是非を判定します。</p>
               <div class="big-number inspectable" id="cashDiffDisplay" data-breakdown="cashDiff">－</div>
               <div class="tiny" id="cashDiffCaption">年間キャッシュ差額（法人 − 個人、初年度ベース）</div>
-              <div class="tiny" id="cashSplitDisplay">個人：－ / 法人：－</div>
+              <div class="tiny" id="cashSplitDisplay">法人成後キャッシュ内訳（初年度） 個人：－ / 法人：－</div>
             </div>
             <div>
               <h4>個人事業の概算手取り</h4>
@@ -972,6 +972,7 @@
       const corpVATYear1 = corpYear1Taxable ? corpVATIfTaxable : { payable: 0, lines: ['1期目は原則免税と判定。納付税額は0円。'] };
       const corpVATYear2 = corpYear2Taxable ? corpVATIfTaxable : { payable: 0, lines: ['2期目は原則免税と判定。納付税額は0円。'] };
       const corpPersonalTakeHome = officerCashComp - personalSocial - corpPersonalIncomeTax - corpPersonalResidentTax;
+      const corpCompanyCashYear1 = corpAfterTaxProfit - setupCost - corpVATYear1.payable;
       const corpTotalOutcome = corpPersonalTakeHome + corpAfterTaxProfit - setupCost - corpVATYear1.payable;
       const corpYear2Outcome = corpPersonalTakeHome + corpAfterTaxProfit - corpVATYear2.payable;
       const diffYear1 = corpTotalOutcome - soleTakeHome;
@@ -1065,6 +1066,12 @@
       registerBreakdown('corpVAT', '法人の消費税試算（1期目・2期目判定）', [
         '1期目判定：' + (corpYear1Taxable ? '課税' : '原則免税'), '2期目判定：' + (corpYear2Taxable ? '課税' : '原則免税'), '1期目の概算消費税 = ' + yen(corpVATYear1.payable), '2期目の概算消費税 = ' + yen(corpVATYear2.payable), '1期目が課税になる主な要因：資本金1,000万円以上・特定新規設立法人・インボイス登録', '2期目が課税になる主な要因：上記に加え、1期目上半期の課税売上高または給与等支払額が1,000万円超'
       ].concat(corpVATIfTaxable.lines));
+      registerBreakdown('corpPersonalTakeHome', '法人成後に個人へ残るキャッシュ（初年度）', [
+        '役員報酬・賞与 = ' + yen(officerCashComp), '本人負担社保 = ' + yen(personalSocial), '本人所得税 = ' + yen(corpPersonalIncomeTax), '本人住民税 = ' + yen(corpPersonalResidentTax), '個人に残るキャッシュ = ' + yen(corpPersonalTakeHome)
+      ]);
+      registerBreakdown('corpCompanyCashYear1', '法人成後に法人へ残るキャッシュ（初年度）', [
+        '税引後会社利益 = ' + yen(corpAfterTaxProfit), '設立コスト = ' + yen(setupCost), '1期目の消費税 = ' + yen(corpVATYear1.payable), '法人に残るキャッシュ（初年度） = ' + yen(corpCompanyCashYear1)
+      ]);
       registerBreakdown('soleTakeHome', '個人事業の概算手取り', [
         '事業利益 = ' + yen(businessProfit), '所得税 = ' + yen(soleIncomeTax), '住民税 = ' + yen(soleResidentTax), '個人事業税 = ' + yen(currentBizTax.tax), '国保＋国民年金 = ' + yen(currentSocialTotal), '消費税 = ' + yen(soleVAT.payable), '概算手取り = ' + yen(soleTakeHome)
       ]);
@@ -1081,7 +1088,7 @@
       document.getElementById('recommendLead').textContent = reportLead;
       document.getElementById('cashDiffDisplay').textContent = yen(diffYear1);
       document.getElementById('cashDiffCaption').textContent = '年間キャッシュ差額（法人 − 個人、初年度ベース） / 2年目差額 ' + yen(diffYear2);
-      document.getElementById('cashSplitDisplay').innerHTML = `個人：<span class="inspectable" data-breakdown="soleTakeHome">${yen(soleTakeHome)}</span> / 法人：<span class="inspectable" data-breakdown="corpTotalOutcome">${yen(corpTotalOutcome)}</span>`;
+      document.getElementById('cashSplitDisplay').innerHTML = `法人成後キャッシュ内訳（初年度） 個人：<span class="inspectable" data-breakdown="corpPersonalTakeHome">${yen(corpPersonalTakeHome)}</span> / 法人：<span class="inspectable" data-breakdown="corpCompanyCashYear1">${yen(corpCompanyCashYear1)}</span>`;
       document.getElementById('soleTakeHome').textContent = yen(soleTakeHome);
       document.getElementById('corpTotalOutcome').textContent = yen(corpTotalOutcome);
 
