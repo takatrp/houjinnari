@@ -340,7 +340,7 @@
                 <label class="check-chip"><input type="checkbox" id="fiveEmployeesPersonal"> 個人事業で5人以上の常用従業員がいる</label>
                 <label class="check-chip"><input type="checkbox" id="professionalService"> 士業・法律会計系に該当</label>
               </div>
-              <div class="note-box">国保は神戸市の直近公表料率ベースの概算です。国民年金は令和8年度の月額を使用します。個人事業税は業種区分と事業主控除290万円で概算します。</div>
+              <div class="note-box">国保は神戸市の直近公表料率ベースの概算です。国民年金は令和8年度の月額を使用します。個人事業税は、青色申告特別控除を反映せず、業種区分と事業主控除290万円で概算します。</div>
             </div>
           </details>
 
@@ -400,7 +400,7 @@
               <div class="grid-3">
                 <div class="field">
                   <label for="corpExtraAdminCost">法人維持コスト（年額）</label>
-                  <div class="suffix"><input type="text" id="corpExtraAdminCost" class="num-input" data-format="int" inputmode="numeric" value="200,000" /><span>円</span></div>
+                  <div class="suffix"><input type="text" id="corpExtraAdminCost" class="num-input" data-format="int" inputmode="numeric" value="500,000" /><span>円</span></div>
                 </div>
                 <div class="field">
                   <label for="corpTaxMode">法人税等の概算方法</label>
@@ -921,7 +921,7 @@
       const soleBusinessIncome = Math.max(0, businessProfit - blueDeduction);
       const currentNationalPension = computeCurrentNationalPension(currentPensionCount);
       const currentKokuho = computeCurrentKokuho(soleBusinessIncome, currentInsuredCount, currentKokuhoCareCount);
-      const currentBizTax = computeCurrentBizTax(soleBusinessIncome, currentBizTypeRate);
+      const currentBizTax = computeCurrentBizTax(businessProfit, currentBizTypeRate);
       const currentSocialTotal = currentNationalPension + currentKokuho.total;
       document.getElementById('autoNationalPension').value = formatRawNumberString(String(Math.round(currentNationalPension)));
       document.getElementById('autoKokuho').value = formatRawNumberString(String(Math.round(currentKokuho.total)));
@@ -1025,7 +1025,12 @@
         '事業所得（青色控除後） = ' + yen(soleBusinessIncome), '国保算定用基礎控除 = ' + yen(currentKokuho.deduction), '算定用所得 = ' + yen(currentKokuho.basis), '医療分 = ' + yen(currentKokuho.med), '後期支援金分 = ' + yen(currentKokuho.sup), '介護分 = ' + yen(currentKokuho.care), '国保合計 = ' + yen(currentKokuho.total)
       ]);
       registerBreakdown('currentBizTax', '個人事業税（自動計算）', [
-        '事業所得（青色控除後） = ' + yen(soleBusinessIncome), '事業主控除 = 2,900,000円', '課税標準 = ' + yen(currentBizTax.taxableBase), '税率 = ' + currentBizTypeRate + '%', '個人事業税 = ' + yen(currentBizTax.tax)
+        '青色申告特別控除前の事業所得（入力した事業利益） = ' + yen(businessProfit),
+        '個人事業税では青色申告特別控除は適用しません。',
+        '事業主控除 = 2,900,000円',
+        '課税標準 = ' + yen(currentBizTax.taxableBase),
+        '税率 = ' + currentBizTypeRate + '%',
+        '個人事業税 = ' + yen(currentBizTax.tax)
       ]);
       registerBreakdown('soleIncomeTax', '個人事業の所得税（概算）', [
         '事業所得 = 事業利益 - 青色申告特別控除 = ' + yen(businessProfit) + ' - ' + yen(blueDeduction) + ' = ' + yen(soleBusinessIncome), '基礎控除 = ' + yen(soleBasicDeduction), 'その他の所得控除 = ' + yen(currentOtherDeduction), '社会保険料控除（国保＋国民年金） = ' + yen(currentSocialTotal), '課税所得 = ' + yen(soleTaxableIncome), '概算所得税（復興特別所得税含む） = ' + yen(soleIncomeTax)
@@ -1255,7 +1260,7 @@
       setNumValue('currentAge', 45); setNumValue('currentInsuredCount', 1); setNumValue('currentPensionCount', 1); document.getElementById('currentBizType').value = '5';
       setNumValue('currentResidentPerCapita', 5000); setNumValue('currentKokuhoCareCount', 1); setNumValue('officerMonthlySalary', 450000); setNumValue('officerBonus', 0);
       setNumValue('bonusCount', 1); document.getElementById('prefectureSelect').value = '兵庫県'; setNumValue('insuredAge', 45); setNumValue('companyPensionRate', 9.15, 'decimal2');
-      setNumValue('personalPensionRate', 9.15, 'decimal2'); setNumValue('corpFixedTax', 70000); setNumValue('corpExtraAdminCost', 200000); document.getElementById('corpTaxMode').value = 'auto';
+      setNumValue('personalPensionRate', 9.15, 'decimal2'); setNumValue('corpFixedTax', 70000); setNumValue('corpExtraAdminCost', 500000); document.getElementById('corpTaxMode').value = 'auto';
       setNumValue('corpFixedRate', 23.00, 'decimal2'); setNumValue('setupCost', 300000); setNumValue('vatSales10', 18000000); setNumValue('vatSales8', 0); setNumValue('vatPurchases10', 6000000);
       setNumValue('vatPurchases8', 0); document.getElementById('soleVatMethod').value = 'general'; document.getElementById('corpVatMethod').value = 'general'; setNumValue('soleVatDeemedRate', 50.0, 'decimal1');
       setNumValue('corpVatDeemedRate', 50.0, 'decimal1'); document.getElementById('corpInvoiceFromStart').value = 'no'; setNumValue('corpSpecifiedSalesHalfYear', 0); setNumValue('corpSpecifiedPayrollHalfYear', 0);
