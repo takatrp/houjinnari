@@ -1004,18 +1004,18 @@
       if (!corpYear2Taxable) consumptionScore += 1;
       const totalScore = taxScore + socialScore + adminScore + creditScore + strategyScore + consumptionScore;
 
-      let recommendation = '結論保留';
+      let recommendation = '判定保留（要精査）';
       let badgeClass = 'warn';
       let reportLead = '結論を急がず、まず消費税・社保・役員報酬設計の精査を行うべきです。';
       if (totalScore >= 4 && diffYear2 >= -200000) {
-        recommendation = '法人成りを前向きに推奨'; badgeClass = 'good'; reportLead = '単年節税だけでなく、信用力・利益留保・制度設計の幅を踏まえると、法人化に進む合理性があります。';
+        recommendation = '法人有利（法人成り推奨）'; badgeClass = 'good'; reportLead = '単年節税だけでなく、信用力・利益留保・制度設計の幅を踏まえると、法人化に進む合理性があります。';
       } else if (totalScore >= 1 && diffYear2 >= -500000) {
-        recommendation = '今期末または時期を見て検討'; badgeClass = 'info'; reportLead = '方向性としては法人化余地がありますが、役員報酬額・消費税のタイミング・社保負担の設計で結論が動きます。';
+        recommendation = 'やや法人有利（設計次第）'; badgeClass = 'info'; reportLead = '方向性としては法人化余地がありますが、役員報酬額・消費税のタイミング・社保負担の設計で結論が動きます。';
       } else if (diffYear2 < -500000 && creditScore <= 1 && strategyScore <= 1) {
-        recommendation = '当面は個人維持が有力'; badgeClass = 'bad'; reportLead = '現状では社保・維持コスト増に対して、法人化の見返りが小さい可能性があります。';
+        recommendation = '個人有利（当面は個人維持）'; badgeClass = 'bad'; reportLead = '現状では社保・維持コスト増に対して、法人化の見返りが小さい可能性があります。';
       }
       if (specialNewCorpRisk || taxableSalesBase === 'unknown') {
-        recommendation = '消費税論点の精査が先'; badgeClass = 'warn'; reportLead = '法人成り時期の設定で結論が変わるおそれがあります。消費税の判定を先に詰めてください。';
+        recommendation = '判定保留（消費税論点を先に精査）'; badgeClass = 'warn'; reportLead = '法人成り時期の設定で結論が変わるおそれがあります。消費税の判定を先に詰めてください。';
       }
 
       registerBreakdown('currentNationalPension', '国民年金（自動計算）', [
