@@ -507,6 +507,7 @@
               <p id="recommendLead" class="muted">税務・社保・消費税・事務負担・定性要素をまとめて見て、法人成りの是非を判定します。</p>
               <div class="big-number inspectable" id="cashDiffDisplay" data-breakdown="cashDiff">－</div>
               <div class="tiny" id="cashDiffCaption">年間キャッシュ差額（法人 − 個人、初年度ベース）</div>
+              <div class="tiny" id="cashSplitDisplay">個人：－ / 法人：－</div>
             </div>
             <div>
               <h4>個人事業の概算手取り</h4>
@@ -1080,6 +1081,7 @@
       document.getElementById('recommendLead').textContent = reportLead;
       document.getElementById('cashDiffDisplay').textContent = yen(diffYear1);
       document.getElementById('cashDiffCaption').textContent = '年間キャッシュ差額（法人 − 個人、初年度ベース） / 2年目差額 ' + yen(diffYear2);
+      document.getElementById('cashSplitDisplay').innerHTML = `個人：<span class="inspectable" data-breakdown="soleTakeHome">${yen(soleTakeHome)}</span> / 法人：<span class="inspectable" data-breakdown="corpTotalOutcome">${yen(corpTotalOutcome)}</span>`;
       document.getElementById('soleTakeHome').textContent = yen(soleTakeHome);
       document.getElementById('corpTotalOutcome').textContent = yen(corpTotalOutcome);
 
