@@ -832,10 +832,14 @@
       const tr = document.createElement('tr');
       const diff = config.corp - config.sole;
       if (config.emphasize) tr.className = diff >= 0 ? 'row-good' : 'row-bad';
-      const labelHtml = config.key ? `<span class="inspectable" data-breakdown="${config.key}">${config.label}</span>` : config.label;
-      const soleHtml = config.key ? `<span class="inspectable" data-breakdown="${config.key}">${yen(config.sole)}</span>` : yen(config.sole);
-      const corpHtml = config.key ? `<span class="inspectable" data-breakdown="${config.key}">${yen(config.corp)}</span>` : yen(config.corp);
-      const diffHtml = config.key ? `<span class="inspectable" data-breakdown="${config.key}">${yen(diff)}</span>` : yen(diff);
+      const keyLabel = config.keyLabel || config.key || null;
+      const keySole = config.keySole || config.key || null;
+      const keyCorp = config.keyCorp || config.key || null;
+      const keyDiff = config.keyDiff || config.key || null;
+      const labelHtml = keyLabel ? `<span class="inspectable" data-breakdown="${keyLabel}">${config.label}</span>` : config.label;
+      const soleHtml = keySole ? `<span class="inspectable" data-breakdown="${keySole}">${yen(config.sole)}</span>` : yen(config.sole);
+      const corpHtml = keyCorp ? `<span class="inspectable" data-breakdown="${keyCorp}">${yen(config.corp)}</span>` : yen(config.corp);
+      const diffHtml = keyDiff ? `<span class="inspectable" data-breakdown="${keyDiff}">${yen(diff)}</span>` : yen(diff);
       tr.innerHTML = `<td>${labelHtml}</td><td>${soleHtml}</td><td>${corpHtml}</td><td>${diffHtml}</td>`;
       tbody.appendChild(tr);
     }
@@ -1004,18 +1008,18 @@
       if (!corpYear2Taxable) consumptionScore += 1;
       const totalScore = taxScore + socialScore + adminScore + creditScore + strategyScore + consumptionScore;
 
-      let recommendation = '結論保留';
+      let recommendation = '判定保留（要精査）';
       let badgeClass = 'warn';
       let reportLead = '結論を急がず、まず消費税・社保・役員報酬設計の精査を行うべきです。';
       if (totalScore >= 4 && diffYear2 >= -200000) {
-        recommendation = '法人成りを前向きに推奨'; badgeClass = 'good'; reportLead = '単年節税だけでなく、信用力・利益留保・制度設計の幅を踏まえると、法人化に進む合理性があります。';
+        recommendation = '法人有利（法人成り推奨）'; badgeClass = 'good'; reportLead = '単年節税だけでなく、信用力・利益留保・制度設計の幅を踏まえると、法人化に進む合理性があります。';
       } else if (totalScore >= 1 && diffYear2 >= -500000) {
-        recommendation = '今期末または時期を見て検討'; badgeClass = 'info'; reportLead = '方向性としては法人化余地がありますが、役員報酬額・消費税のタイミング・社保負担の設計で結論が動きます。';
+        recommendation = 'やや法人有利（設計次第）'; badgeClass = 'info'; reportLead = '方向性としては法人化余地がありますが、役員報酬額・消費税のタイミング・社保負担の設計で結論が動きます。';
       } else if (diffYear2 < -500000 && creditScore <= 1 && strategyScore <= 1) {
-        recommendation = '当面は個人維持が有力'; badgeClass = 'bad'; reportLead = '現状では社保・維持コスト増に対して、法人化の見返りが小さい可能性があります。';
+        recommendation = '個人有利（当面は個人維持）'; badgeClass = 'bad'; reportLead = '現状では社保・維持コスト増に対して、法人化の見返りが小さい可能性があります。';
       }
       if (specialNewCorpRisk || taxableSalesBase === 'unknown') {
-        recommendation = '消費税論点の精査が先'; badgeClass = 'warn'; reportLead = '法人成り時期の設定で結論が変わるおそれがあります。消費税の判定を先に詰めてください。';
+        recommendation = '判定保留（消費税論点を先に精査）'; badgeClass = 'warn'; reportLead = '法人成り時期の設定で結論が変わるおそれがあります。消費税の判定を先に詰めてください。';
       }
 
       registerBreakdown('currentNationalPension', '国民年金（自動計算）', [
@@ -1037,6 +1041,18 @@
       ]);
       registerBreakdown('soleResidentTax', '個人事業の住民税（概算）', [
         '住民税課税所得 = ' + yen(soleResidentTaxable), '所得割 = ' + yen(Math.max(0, soleResidentTaxable) * 0.10), '均等割等 = ' + yen(currentResidentPerCapita), '概算住民税 = ' + yen(soleResidentTax)
+      ]);
+      registerBreakdown('corpPersonalIncomeTax', '法人化後の所得税（本人・概算）', [
+        '給与収入 = 役員報酬＋賞与 = ' + yen(officerCashComp), '給与所得控除 = ' + yen(salaryDed), '給与所得 = ' + yen(salaryIncome), '基礎控除 = ' + yen(corpBasicDeduction), 'その他の所得控除 = ' + yen(currentOtherDeduction), '社会保険料控除（本人負担） = ' + yen(personalSocial), '課税所得 = ' + yen(corpPersonalTaxable), '概算所得税（復興特別所得税含む） = ' + yen(corpPersonalIncomeTax)
+      ]);
+      registerBreakdown('corpPersonalResidentTax', '法人化後の住民税（本人・概算）', [
+        '住民税課税所得 = ' + yen(corpPersonalResidentTaxable), '所得割 = ' + yen(Math.max(0, corpPersonalResidentTaxable) * 0.10), '均等割等 = ' + yen(currentResidentPerCapita), '概算住民税 = ' + yen(corpPersonalResidentTax)
+      ]);
+      registerBreakdown('currentSocial', '個人事業の社会保険（国保＋国民年金）', [
+        '国民年金 = ' + yen(currentNationalPension), '国保 = ' + yen(currentKokuho.total), '合計 = ' + yen(currentSocialTotal)
+      ]);
+      registerBreakdown('personalSocial', '法人化後の本人負担社会保険料', [
+        '本人健康保険料 = ' + yen(personalHealth), '本人厚生年金 = ' + yen(personalPension), '合計 = ' + yen(personalSocial)
       ]);
       registerBreakdown('corpSocial', '法人成り後の社会保険料（上限反映・都道府県別自動料率）', [
         '協会けんぽ都道府県 = ' + autoRates.prefecture, '健康保険料率 = ' + pct(autoRates.healthRate, 2), '介護保険料率 = ' + pct(autoRates.careRate, 2) + '（40〜64歳のみ加算）', '子ども・子育て支援金率 = ' + pct(autoRates.childRate, 2), '健康関連率（片側） = ' + pct(autoRates.companyHealthRate * 100, 2), '会社負担社保合計 = ' + yen(companySocial), '本人負担社保合計 = ' + yen(personalSocial)
@@ -1095,10 +1111,10 @@
 
       const comparisonRows = [
         { label: '事業利益 / 原資', sole: businessProfit, corp: businessProfit },
-        { label: '所得税（本人）', sole: -soleIncomeTax, corp: -corpPersonalIncomeTax, key: 'soleIncomeTax' },
-        { label: '住民税（本人）', sole: -soleResidentTax, corp: -corpPersonalResidentTax, key: 'soleResidentTax' },
+        { label: '所得税（本人）', sole: -soleIncomeTax, corp: -corpPersonalIncomeTax, keyLabel: 'cashDiff', keySole: 'soleIncomeTax', keyCorp: 'corpPersonalIncomeTax', keyDiff: 'cashDiff' },
+        { label: '住民税（本人）', sole: -soleResidentTax, corp: -corpPersonalResidentTax, keyLabel: 'cashDiff', keySole: 'soleResidentTax', keyCorp: 'corpPersonalResidentTax', keyDiff: 'cashDiff' },
         { label: '個人事業税', sole: -currentBizTax.tax, corp: 0, key: 'currentBizTax' },
-        { label: '国保＋国民年金 / 本人社保', sole: -currentSocialTotal, corp: -personalSocial, key: 'corpSocial' },
+        { label: '国保＋国民年金 / 本人社保', sole: -currentSocialTotal, corp: -personalSocial, keyLabel: 'cashDiff', keySole: 'currentSocial', keyCorp: 'personalSocial', keyDiff: 'cashDiff' },
         { label: '役員報酬・賞与', sole: 0, corp: officerCashComp },
         { label: '会社負担社保', sole: 0, corp: -companySocial, key: 'corpSocial' },
         { label: '法人維持コスト', sole: 0, corp: -corpExtraAdminCost },
