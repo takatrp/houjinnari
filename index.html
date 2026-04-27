@@ -472,8 +472,8 @@
                 <div class="field"><label for="vatPurchases8">課税仕入等（8％）</label><div class="suffix"><input type="text" id="vatPurchases8" class="num-input" data-format="int" inputmode="numeric" value="0" /><span>円</span></div></div>
               </div>
               <div class="grid-2">
-                <div class="field"><label for="soleVatMethod">個人事業の消費税方式</label><select id="soleVatMethod"><option value="exempt">免税</option><option value="general" selected>原則課税</option><option value="20pct">2割特例</option><option value="simplified">簡易課税</option></select></div>
-                <div class="field"><label for="corpVatMethod">法人が課税事業者になった場合の方式</label><select id="corpVatMethod"><option value="general" selected>原則課税</option><option value="20pct">2割特例</option><option value="simplified">簡易課税</option></select></div>
+                <div class="field"><label for="soleVatMethod">個人事業の消費税方式</label><select id="soleVatMethod"><option value="exempt">免税</option><option value="general" selected>本則課税</option><option value="20pct">2割特例</option><option value="simplified">簡易課税</option></select></div>
+                <div class="field"><label for="corpVatMethod">法人が課税事業者になった場合の方式</label><select id="corpVatMethod"><option value="general" selected>本則課税</option><option value="20pct">2割特例</option><option value="simplified">簡易課税</option></select></div>
               </div>
               <div class="grid-2">
                 <div class="field"><label for="soleVatDeemedRate">個人事業：簡易課税のみなし仕入率</label><div class="suffix"><input type="text" id="soleVatDeemedRate" class="num-input" data-format="decimal1" inputmode="decimal" value="50.0" /><span>％</span></div></div>
@@ -840,7 +840,7 @@
         lines = ['売上税額 = 10%売上×10% + 8%売上×8% = ' + yen(outputTax), 'みなし仕入率 = ' + deemedRate + '%', '簡易課税の納付税額 = 売上税額 × (1 - みなし仕入率) = ' + yen(payable)];
       } else {
         payable = outputTax - inputTax;
-        lines = ['売上税額 = 10%売上×10% + 8%売上×8% = ' + yen(outputTax), '仕入税額 = 10%仕入×10% + 8%仕入×8% = ' + yen(inputTax), '原則課税の納付税額 = 売上税額 - 仕入税額 = ' + yen(payable)];
+        lines = ['売上税額 = 10%売上×10% + 8%売上×8% = ' + yen(outputTax), '仕入税額 = 10%仕入×10% + 8%仕入×8% = ' + yen(inputTax), '本則課税の納付税額 = 売上税額 - 仕入税額 = ' + yen(payable)];
       }
       return { payable, outputTax, inputTax, lines };
     }
