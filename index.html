@@ -59,7 +59,7 @@
     .panel, .card { background: var(--surface); backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); }
     .panel { overflow: hidden; }
     .panel-header {
-      padding: 18px 20px;
+      padding: 14px 16px;
       border-bottom: 1px solid var(--line);
       background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(240,247,255,0.96) 100%);
       position: sticky; top: 0; z-index: 2;
@@ -67,7 +67,7 @@
     .panel-header .eyebrow { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); font-size: 0.78rem; font-weight: 800; margin-bottom: 8px; }
     .panel-header h2 { margin: 0 0 4px; font-size: 1.1rem; color: #173f84; }
     .panel-header p { margin: 0; color: var(--muted); font-size: 0.92rem; }
-    .panel-body { padding: 16px; }
+    .panel-body { padding: 12px; }
     details.section { border: 1px solid var(--line); border-radius: 20px; background: rgba(255,255,255,0.9); margin-bottom: 12px; overflow: hidden; }
     details.section[open] { box-shadow: 0 8px 20px rgba(37, 99, 235, 0.05); }
     details.section summary { list-style: none; cursor: pointer; padding: 14px 16px; font-weight: 800; position: relative; background: linear-gradient(180deg, #ffffff 0%, #f6fbff 100%); color: #18428a; }
@@ -83,7 +83,7 @@
     .field label { font-size: 0.9rem; font-weight: 800; color: #244268; }
     .hint { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
     .field input, .field select, .field textarea {
-      width: 100%; border: 1px solid #cfe0f5; border-radius: 14px; padding: 11px 13px; font: inherit; background: #ffffff; color: var(--text); outline: none;
+      width: 100%; border: 1px solid #cfe0f5; border-radius: 12px; padding: 8px 10px; font: inherit; background: #ffffff; color: var(--text); outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
     .field input:focus, .field select:focus, .field textarea:focus { border-color: #7db3f7; box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.16); background: #fcfeff; }
@@ -93,9 +93,11 @@
     .field .suffix span { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #6b7ea5; font-size: 0.84rem; pointer-events: none; font-weight: 700; }
     .field .suffix input { padding-right: 42px; }
     .inline-checks { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-top: 10px; }
-    .check-chip { display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,0.92); font-size: 0.92rem; color: #3d5578; }
+    .check-chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,0.92); font-size: 0.88rem; color: #3d5578; }
+    .inline-checks.stack { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .inline-checks.stack .check-chip { width: 100%; border-radius: 14px; padding: 8px 10px; }
     .check-chip input { accent-color: var(--primary); }
-    .btn { appearance: none; border: 1px solid transparent; border-radius: 14px; padding: 11px 15px; font: inherit; font-weight: 800; cursor: pointer; transition: 0.2s ease; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08); }
+    .btn { appearance: none; border: 1px solid transparent; border-radius: 12px; padding: 8px 12px; font: inherit; font-weight: 800; cursor: pointer; transition: 0.2s ease; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08); }
     .btn:hover { transform: translateY(-1px); }
     .btn.primary { color: #fff; background: linear-gradient(135deg, var(--primary) 0%, #6c9cab 100%); }
     .btn.secondary { background: #fff; color: #2a4468; border-color: var(--line-strong); }
@@ -140,7 +142,12 @@
     .score-card .state { margin-top: 6px; font-weight: 800; }
     .report-box { white-space: pre-wrap; background: linear-gradient(180deg, #fbfdff 0%, #f7fbff 100%); border: 1px solid var(--line); border-radius: 18px; padding: 16px; font-size: 0.94rem; }
     .sticky-footer { display: flex; gap: 10px; justify-content: flex-end; position: sticky; bottom: 12px; padding-top: 12px; background: linear-gradient(180deg, rgba(247,251,255,0) 0%, rgba(247,251,255,0.95) 35%, rgba(247,251,255,1) 100%); }
-    .note-box { font-size: 0.88rem; color: var(--muted); background: linear-gradient(180deg, #fcfeff 0%, #f6fbff 100%); border: 1px dashed #c9ddf7; border-radius: 14px; padding: 12px 14px; margin-top: 10px; }
+    .note-box { font-size: 0.86rem; color: var(--muted); background: linear-gradient(180deg, #fcfeff 0%, #f6fbff 100%); border: 1px dashed #c9ddf7; border-radius: 12px; padding: 9px 10px; margin-top: 8px; }
+    .note-disclosure { margin-top: 8px; }
+    .note-disclosure summary { cursor: pointer; color: #2f6475; font-size: 0.84rem; font-weight: 700; list-style: none; }
+    .note-disclosure summary::-webkit-details-marker { display: none; }
+    .note-disclosure summary::before { content: "＋ "; }
+    .note-disclosure[open] summary::before { content: "－ "; }
     .cash-meta { margin-top: 8px; padding: 6px 10px; border-radius: 10px; border: 1px solid #e2e8f0; background: #f8fafc; color: #51607a; }
     .cash-split { font-weight: 700; }
     .summary-judge { display: grid; gap: 8px; }
@@ -358,7 +365,10 @@
                 <label class="check-chip"><input type="checkbox" id="fiveEmployeesPersonal"> 個人事業で5人以上の常用従業員がいる</label>
                 <label class="check-chip"><input type="checkbox" id="professionalService"> 士業・法律会計系に該当</label>
               </div>
-              <div class="note-box">国保は神戸市の直近公表料率ベースの概算です。国民年金は令和8年度の月額を使用します。個人事業税は、青色申告特別控除を反映せず、業種区分と事業主控除290万円で概算します。</div>
+              <details class="note-disclosure">
+                <summary>注意書きを表示</summary>
+                <div class="note-box">国保は神戸市の直近公表料率ベースの概算です。国民年金は令和8年度の月額を使用します。個人事業税は、青色申告特別控除を反映せず、業種区分と事業主控除290万円で概算します。</div>
+              </details>
             </div>
           </details>
 
@@ -439,7 +449,7 @@
                 </div>
                 <div class="field">
                   <label>運用前提</label>
-                  <div class="inline-checks">
+                  <div class="inline-checks stack">
                     <label class="check-chip"><input type="checkbox" id="needSalaryStability" checked> 役員報酬は原則固定で運用する</label>
                     <label class="check-chip"><input type="checkbox" id="includeSetupInYear1" checked> 初年度比較に設立コストを含める</label>
                     <label class="check-chip"><input type="checkbox" id="considerRetention" checked> 会社に利益を残す前提で考える</label>
@@ -467,11 +477,14 @@
                 <div class="field"><label for="corpVatDeemedRate">法人：簡易課税のみなし仕入率</label><div class="suffix"><input type="text" id="corpVatDeemedRate" class="num-input" data-format="decimal1" inputmode="decimal" value="50.0" /><span>％</span></div></div>
               </div>
               <div class="grid-3">
-                <div class="field"><label for="corpInvoiceFromStart">法人は1期目からインボイス登録</label><select id="corpInvoiceFromStart"><option value="no" selected>しない</option><option value="yes">する</option></select></div>
+                <div class="field"><label>法人は1期目からインボイス登録する</label><label class="check-chip"><input type="checkbox" id="corpInvoiceFromStart"> インボイス登録する</label></div>
                 <div class="field"><label for="corpSpecifiedSalesHalfYear">法人1期目上半期の課税売上高見込み</label><div class="suffix"><input type="text" id="corpSpecifiedSalesHalfYear" class="num-input" data-format="int" inputmode="numeric" value="0" /><span>円</span></div></div>
                 <div class="field"><label for="corpSpecifiedPayrollHalfYear">法人1期目上半期の給与等支払額見込み</label><div class="suffix"><input type="text" id="corpSpecifiedPayrollHalfYear" class="num-input" data-format="int" inputmode="numeric" value="0" /><span>円</span></div></div>
               </div>
-              <div class="note-box">法人の1期目・2期目は、原則免税として判定します。ただし、資本金1,000万円以上、特定新規設立法人、1期目からのインボイス登録、または2期目の特定期間（通常は1期目上半期）の課税売上高や給与等支払額が1,000万円超の場合は、その期は課税として試算します。</div>
+              <details class="note-disclosure">
+                <summary>判定ロジックの注意書きを表示</summary>
+                <div class="note-box">法人の1期目・2期目は、原則免税として判定します。ただし、資本金1,000万円以上、特定新規設立法人、1期目からのインボイス登録、または2期目の特定期間（通常は1期目上半期）の課税売上高や給与等支払額が1,000万円超の場合は、その期は課税として試算します。</div>
+              </details>
             </div>
           </details>
 
@@ -487,7 +500,10 @@
                 <label class="check-chip"><input type="checkbox" id="consumptionTaxTiming"> 消費税のタイミングを慎重に見たい</label>
                 <label class="check-chip"><input type="checkbox" id="majorClientsNeedCorp"> 主要取引先が法人を好む</label>
               </div>
-              <div class="note-box">消費税は設立時期・資本金・特定期間・グループ関係で結論が変わりやすいため、この欄は「要精査フラグ」を立てるためのものです。</div>
+              <details class="note-disclosure">
+                <summary>補足注意を表示</summary>
+                <div class="note-box">消費税は設立時期・資本金・特定期間・グループ関係で結論が変わりやすいため、この欄は「要精査フラグ」を立てるためのものです。</div>
+              </details>
             </div>
           </details>
 
@@ -942,7 +958,7 @@
       const corpVatMethod = document.getElementById('corpVatMethod').value;
       const soleVatDeemedRate = num('soleVatDeemedRate');
       const corpVatDeemedRate = num('corpVatDeemedRate');
-      const corpInvoiceFromStart = document.getElementById('corpInvoiceFromStart').value === 'yes';
+      const corpInvoiceFromStart = checked('corpInvoiceFromStart');
       const corpSpecifiedSalesHalfYear = num('corpSpecifiedSalesHalfYear');
       const corpSpecifiedPayrollHalfYear = num('corpSpecifiedPayrollHalfYear');
       const capitalAmount = num('capitalAmount');
@@ -1297,7 +1313,7 @@
         fiveEmployeesPersonal: false, professionalService: false, officerMonthlySalary: 500000, officerBonus: 1200000, bonusCount: 2, prefectureSelect: '兵庫県',
         insuredAge: 45, companyPensionRate: 9.15, personalPensionRate: 9.15, corpFixedTax: 70000, corpExtraAdminCost: 220000, corpTaxMode: 'auto', corpFixedRate: 23.00,
         setupCost: 300000, needSalaryStability: true, includeSetupInYear1: true, considerRetention: true, vatSales10: 22000000, vatSales8: 0, vatPurchases10: 7000000,
-        vatPurchases8: 0, soleVatMethod: 'general', corpVatMethod: 'general', soleVatDeemedRate: 50.0, corpVatDeemedRate: 50.0, corpInvoiceFromStart: 'no',
+        vatPurchases8: 0, soleVatMethod: 'general', corpVatMethod: 'general', soleVatDeemedRate: 50.0, corpVatDeemedRate: 50.0, corpInvoiceFromStart: false,
         corpSpecifiedSalesHalfYear: 5000000, corpSpecifiedPayrollHalfYear: 3000000, taxableSalesBase: 'over', capitalAmount: 1000000, specialNewCorpRisk: false,
         consumptionTaxTiming: true, majorClientsNeedCorp: true, needCredit: true, needFinancing: true, needHiring: false, needRetentionScore: true, needRetirement: true,
         needSocialSecurity: true, avoidAdminBurden: false, needFlexibility: false, goalTax: true, goalCash: true, goalCredit: true, goalRetention: true, goalRetirement: true,
@@ -1324,7 +1340,7 @@
       setNumValue('personalPensionRate', 9.15, 'decimal2'); setNumValue('corpFixedTax', 70000); setNumValue('corpExtraAdminCost', 500000); document.getElementById('corpTaxMode').value = 'auto';
       setNumValue('corpFixedRate', 23.00, 'decimal2'); setNumValue('setupCost', 300000); setNumValue('vatSales10', 18000000); setNumValue('vatSales8', 0); setNumValue('vatPurchases10', 6000000);
       setNumValue('vatPurchases8', 0); document.getElementById('soleVatMethod').value = 'general'; document.getElementById('corpVatMethod').value = 'general'; setNumValue('soleVatDeemedRate', 50.0, 'decimal1');
-      setNumValue('corpVatDeemedRate', 50.0, 'decimal1'); document.getElementById('corpInvoiceFromStart').value = 'no'; setNumValue('corpSpecifiedSalesHalfYear', 0); setNumValue('corpSpecifiedPayrollHalfYear', 0);
+      setNumValue('corpVatDeemedRate', 50.0, 'decimal1'); document.getElementById('corpInvoiceFromStart').checked = false; setNumValue('corpSpecifiedSalesHalfYear', 0); setNumValue('corpSpecifiedPayrollHalfYear', 0);
       document.getElementById('taxableSalesBase').value = 'over'; setNumValue('capitalAmount', 1000000);
       document.getElementById('goalTax').checked = true; document.getElementById('needSalaryStability').checked = true; document.getElementById('includeSetupInYear1').checked = true; document.getElementById('considerRetention').checked = true; document.getElementById('invoiceRegistered').checked = true;
       syncAutoRates(); calculate();
