@@ -6,22 +6,22 @@
   <title>個人事業主の法人成り検討ツール</title>
   <style>
     :root {
-      --bg: linear-gradient(180deg, #eef6ff 0%, #f7fbff 24%, #f8fbfd 100%);
-      --surface: rgba(255,255,255,0.96);
-      --line: #d8e8fb;
-      --line-strong: #bfd7f4;
-      --text: #1f2a37;
-      --muted: #64748b;
-      --primary: #2563eb;
-      --primary-soft: #eff6ff;
+      --bg: linear-gradient(180deg, #f5f8fc 0%, #f8fbff 28%, #fafcff 100%);
+      --surface: rgba(255,255,255,0.98);
+      --line: #d9e3f0;
+      --line-strong: #c3d2e6;
+      --text: #223046;
+      --muted: #5f6f86;
+      --primary: #2957a4;
+      --primary-soft: #eef4ff;
       --good: #0f766e;
       --good-soft: #ccfbf1;
       --warn: #b45309;
       --warn-soft: #ffedd5;
       --bad: #b91c1c;
       --bad-soft: #fee2e2;
-      --shadow-soft: 0 12px 28px rgba(37, 99, 235, 0.08);
-      --shadow-card: 0 10px 24px rgba(15, 23, 42, 0.06);
+      --shadow-soft: 0 10px 24px rgba(41, 87, 164, 0.08);
+      --shadow-card: 0 8px 20px rgba(15, 23, 42, 0.05);
       --radius-xl: 24px;
     }
     * { box-sizing: border-box; }
@@ -150,6 +150,8 @@
     .report-box { white-space: pre-wrap; background: linear-gradient(180deg, #fbfdff 0%, #f7fbff 100%); border: 1px solid var(--line); border-radius: 18px; padding: 16px; font-size: 0.94rem; }
     .sticky-footer { display: flex; gap: 10px; justify-content: flex-end; position: sticky; bottom: 12px; padding-top: 12px; background: linear-gradient(180deg, rgba(247,251,255,0) 0%, rgba(247,251,255,0.95) 35%, rgba(247,251,255,1) 100%); }
     .note-box { font-size: 0.88rem; color: var(--muted); background: linear-gradient(180deg, #fcfeff 0%, #f6fbff 100%); border: 1px dashed #c9ddf7; border-radius: 14px; padding: 12px 14px; margin-top: 10px; }
+    .cash-meta { margin-top: 8px; padding: 6px 10px; border-radius: 10px; border: 1px solid #e2e8f0; background: #f8fafc; color: #51607a; }
+    .cash-split { font-weight: 700; }
     .inspectable { cursor: pointer; color: #1d4ed8; text-decoration: underline dotted; text-underline-offset: 3px; font-weight: 700; }
     .inspectable:hover { opacity: 0.85; }
     .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
@@ -176,6 +178,20 @@
     .report-table th:first-child, .report-table td:first-child { text-align: left; width: 42%; }
     .report-list { margin: 0; padding-left: 18px; }
     .report-list li { margin: 6px 0; }
+    .page-footer {
+      width: min(1500px, 96vw);
+      margin: 12px auto 24px;
+      padding: 10px 14px;
+      border: 1px solid #dbe4f1;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.94);
+      color: #64748b;
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+    }
 
     @page { size: A4 portrait; margin: 12mm; }
     @media (max-width: 1180px) {
@@ -506,8 +522,8 @@
               <h3 id="recommendTitle">まずは入力してください</h3>
               <p id="recommendLead" class="muted">税務・社保・消費税・事務負担・定性要素をまとめて見て、法人成りの是非を判定します。</p>
               <div class="big-number inspectable" id="cashDiffDisplay" data-breakdown="cashDiff">－</div>
-              <div class="tiny" id="cashDiffCaption">年間キャッシュ差額（法人 − 個人、初年度ベース）</div>
-              <div class="tiny" id="cashSplitDisplay">法人成後キャッシュ内訳（初年度） 個人：－ / 法人：－</div>
+              <div class="tiny cash-meta" id="cashDiffCaption">年間キャッシュ差額（法人 − 個人、初年度ベース）</div>
+              <div class="tiny cash-meta cash-split" id="cashSplitDisplay">法人成後キャッシュ内訳（初年度） 個人：－ / 法人：－</div>
             </div>
             <div>
               <h4>個人事業の概算手取り</h4>
@@ -639,6 +655,10 @@
       <ul class="modal-lines" id="modalLines"></ul>
     </div>
   </div>
+  <footer class="page-footer screen-only">
+    <span id="revisionInfo">r----</span>
+    <span>最終更新日: <span id="lastUpdated">----</span></span>
+  </footer>
 
   <script>
     const fmt = new Intl.NumberFormat('ja-JP');
@@ -1253,6 +1273,17 @@
       document.getElementById('modalBackdrop').classList.add('open');
     }
     function closeBreakdown() { document.getElementById('modalBackdrop').classList.remove('open'); }
+    function initPageMeta() {
+      const sourceDate = new Date(document.lastModified);
+      const dt = Number.isNaN(sourceDate.getTime()) ? new Date() : sourceDate;
+      const y = dt.getFullYear();
+      const m = String(dt.getMonth() + 1).padStart(2, '0');
+      const d = String(dt.getDate()).padStart(2, '0');
+      const hh = String(dt.getHours()).padStart(2, '0');
+      const mm = String(dt.getMinutes()).padStart(2, '0');
+      document.getElementById('revisionInfo').textContent = `r${y}${m}${d}${hh}${mm}`;
+      document.getElementById('lastUpdated').textContent = `${y}-${m}-${d}`;
+    }
 
     function loadSample() {
       const sample = {
@@ -1312,6 +1343,7 @@
     });
     document.querySelectorAll('select, textarea').forEach(el => { el.addEventListener('change', calculate); el.addEventListener('input', calculate); });
     document.querySelectorAll('input[type="checkbox"]').forEach(el => { el.addEventListener('change', calculate); });
+    initPageMeta();
     syncAutoRates();
     calculate();
   </script>
