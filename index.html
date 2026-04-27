@@ -12,8 +12,8 @@
       --surface: rgba(255,255,255,0.98);
       --line: #d4e0e5;
       --line-strong: #b9cdd4;
-      --text: #223046;
-      --muted: #5f6f86;
+      --text: #1f2a37;
+      --muted: #475569;
       --primary: #578899;
       --primary-soft: #edf5f7;
       --good: #0f766e;
@@ -51,9 +51,9 @@
     }
     .hero-heading { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
     .hero-logo { width: 46px; height: 46px; border-radius: 12px; object-fit: cover; border: 1px solid #c5d7dd; background: #fff; }
-    .hero h1 { margin: 0 0 10px; font-size: clamp(1.35rem, 1.9vw, 1.95rem); line-height: 1.3; color: #2f5461; }
-    .hero p { margin: 0; max-width: 980px; color: #35517a; }
-    .hero .sub { margin-top: 10px; font-size: 0.92rem; color: #587193; }
+    .hero h1 { margin: 0 0 10px; font-size: clamp(1.35rem, 1.9vw, 1.95rem); line-height: 1.3; color: #284753; }
+    .hero p { margin: 0; max-width: 980px; color: #36505f; }
+    .hero .sub { margin-top: 10px; font-size: 0.92rem; color: #4f6471; }
     .top-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
     .layout { display: grid; grid-template-columns: minmax(380px, 580px) minmax(560px, 1fr); gap: 18px; align-items: start; }
     .panel, .card { background: var(--surface); backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); }
@@ -102,9 +102,9 @@
     .btn.soft { background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); color: var(--primary); border-color: #cfe0ff; }
     .btn.warn { background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%); color: var(--warn); border-color: #fed7aa; }
     .result-shell { display: grid; gap: 14px; }
-    .summary-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 12px; }
+    .summary-grid { display: grid; grid-template-columns: 1.45fr 0.9fr 0.9fr; gap: 12px; }
     .card { padding: 16px; }
-    .card h3, .card h4 { margin: 0 0 10px; color: #1b437d; }
+    .card h3, .card h4 { margin: 0 0 10px; color: #2a4a58; }
     .card p { margin: 0; }
     .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; font-size: 0.84rem; font-weight: 800; margin-bottom: 8px; }
     .badge.good { background: var(--good-soft); color: var(--good); }
@@ -143,11 +143,16 @@
     .note-box { font-size: 0.88rem; color: var(--muted); background: linear-gradient(180deg, #fcfeff 0%, #f6fbff 100%); border: 1px dashed #c9ddf7; border-radius: 14px; padding: 12px 14px; margin-top: 10px; }
     .cash-meta { margin-top: 8px; padding: 6px 10px; border-radius: 10px; border: 1px solid #e2e8f0; background: #f8fafc; color: #51607a; }
     .cash-split { font-weight: 700; }
-    .diff-highlight { margin-top: 10px; padding: 10px 12px; border: 1px solid #b8d0d8; border-radius: 14px; background: linear-gradient(180deg, #f1f7f9 0%, #f8fbfc 100%); box-shadow: inset 0 0 0 1px rgba(87,136,153,0.06); }
+    .summary-judge { display: grid; gap: 8px; }
+    .diff-highlight { margin-top: 4px; padding: 12px 12px; border: 1px solid #9ebbc5; border-radius: 14px; background: linear-gradient(180deg, #edf6f8 0%, #f7fbfc 100%); box-shadow: inset 0 0 0 1px rgba(87,136,153,0.1); }
     .diff-highlight .big-number { color: #3f6f7e; font-size: clamp(1.45rem, 2vw, 1.95rem); }
     #recommendTitle { font-size: 1.45rem; color: #2f5461; }
     #recommendLead { font-size: 0.98rem; }
-    .inspectable { cursor: pointer; color: #3f6f7e; text-decoration: underline dotted; text-underline-offset: 3px; font-weight: 700; }
+    .outcome-card { border: 1px solid #d5e1e6; border-radius: 12px; padding: 10px; background: #fbfdfe; }
+    .outcome-card h4 { font-size: 0.94rem; margin-bottom: 6px; color: #365564; }
+    .outcome-card .big-number { font-size: clamp(1.2rem, 1.5vw, 1.5rem); color: #3f6270; margin-top: 2px; }
+    .outcome-card .tiny { color: #56687b; }
+    .inspectable { cursor: pointer; color: #2f6475; text-decoration: underline dotted; text-underline-offset: 3px; font-weight: 700; }
     .inspectable:hover { opacity: 0.85; }
     .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
     .modal-backdrop.open { display: flex; }
@@ -514,7 +519,8 @@
       <section class="result-shell">
         <div class="card screen-only">
           <div class="summary-grid">
-            <div>
+            <div class="summary-judge">
+              <div class="tiny">判定結果</div>
               <div id="recommendBadge" class="badge info">判定準備中</div>
               <h3 id="recommendTitle">まずは入力してください</h3>
               <p id="recommendLead" class="muted">税務・社保・消費税・事務負担・定性要素をまとめて見て、法人成りの是非を判定します。</p>
@@ -524,12 +530,12 @@
                 <div class="tiny cash-meta cash-split" id="cashSplitDisplay">法人成後キャッシュ内訳（初年度） 個人：－ / 法人：－</div>
               </div>
             </div>
-            <div>
+            <div class="outcome-card">
               <h4>個人事業の概算手取り</h4>
               <div class="big-number inspectable" id="soleTakeHome" data-breakdown="soleTakeHome">－</div>
               <div class="tiny">所得税・住民税・個人事業税・国民年金・国保・消費税控除後</div>
             </div>
-            <div>
+            <div class="outcome-card">
               <h4>法人化後の概算</h4>
               <div class="big-number inspectable" id="corpTotalOutcome" data-breakdown="corpTotalOutcome">－</div>
               <div class="tiny">本人手取り + 会社残り利益 − 設立コスト − 1期目消費税</div>
