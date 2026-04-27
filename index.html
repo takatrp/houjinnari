@@ -81,7 +81,13 @@
     .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .field { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
     .field label { font-size: 0.9rem; font-weight: 800; color: #244268; }
-    .hint { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+    .label-row { display: inline-flex; align-items: center; gap: 6px; }
+    .info-icon {
+      width: 18px; height: 18px; border-radius: 999px; border: 1px solid #8eb0bb; background: #f4fafc; color: #2f6475;
+      font-size: 0.72rem; line-height: 1; font-weight: 900; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+    }
+    .hint-inline { margin-top: 8px; font-size: 0.84rem; color: #2f6475; display: inline-flex; align-items: center; gap: 6px; }
+    .hint { display: none; }
     .field input, .field select, .field textarea {
       width: 100%; border: 1px solid #cfe0f5; border-radius: 12px; padding: 8px 10px; font: inherit; background: #ffffff; color: var(--text); outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
@@ -280,7 +286,7 @@
                   <div class="suffix"><input type="text" id="annualSales" class="num-input" data-format="int" inputmode="numeric" value="18,000,000" /><span>円</span></div>
                 </div>
                 <div class="field">
-                  <label for="businessProfit">事業利益（事業主報酬控除前）</label>
+                  <label for="businessProfit"><span class="label-row">事業利益（事業主報酬控除前）<button type="button" class="info-icon" data-breakdown="infoBusinessProfit" aria-label="事業利益の補足">i</button></span></label>
                   <div class="suffix"><input type="text" id="businessProfit" class="num-input" data-format="int" inputmode="numeric" value="7,000,000" /><span>円</span></div>
                   <div class="hint">消費税納付前のキャッシュ原資として扱います。</div>
                 </div>
@@ -296,7 +302,7 @@
                   </select>
                 </div>
                 <div class="field">
-                  <label for="currentOtherDeduction">その他の所得控除（社会保険料控除を除く概算）</label>
+                  <label for="currentOtherDeduction"><span class="label-row">その他の所得控除（社会保険料控除を除く概算）<button type="button" class="info-icon" data-breakdown="infoOtherDeduction" aria-label="所得控除の補足">i</button></span></label>
                   <div class="suffix"><input type="text" id="currentOtherDeduction" class="num-input" data-format="int" inputmode="numeric" value="0" /><span>円</span></div>
                   <div class="hint">生命保険料控除・小規模共済・扶養控除など。</div>
                 </div>
@@ -307,7 +313,7 @@
                   <div class="suffix"><input type="text" id="currentAge" class="num-input" data-format="int" inputmode="numeric" value="45" /><span>歳</span></div>
                 </div>
                 <div class="field">
-                  <label for="currentKokuhoModel">国保モデル</label>
+                  <label for="currentKokuhoModel"><span class="label-row">国保モデル<button type="button" class="info-icon" data-breakdown="infoKokuhoModel" aria-label="国保モデルの補足">i</button></span></label>
                   <select id="currentKokuhoModel">
                     <option value="kobe2025" selected>神戸市（直近公表料率ベース）</option>
                   </select>
@@ -365,10 +371,7 @@
                 <label class="check-chip"><input type="checkbox" id="fiveEmployeesPersonal"> 個人事業で5人以上の常用従業員がいる</label>
                 <label class="check-chip"><input type="checkbox" id="professionalService"> 士業・法律会計系に該当</label>
               </div>
-              <details class="note-disclosure">
-                <summary>注意書きを表示</summary>
-                <div class="note-box">国保は神戸市の直近公表料率ベースの概算です。国民年金は令和8年度の月額を使用します。個人事業税は、青色申告特別控除を反映せず、業種区分と事業主控除290万円で概算します。</div>
-              </details>
+              <div class="hint-inline"><button type="button" class="info-icon" data-breakdown="infoCurrentAutoCalc" aria-label="現状自動計算の注意">i</button> 自動計算の注意</div>
             </div>
           </details>
 
@@ -385,7 +388,7 @@
                   <div class="suffix"><input type="text" id="officerBonus" class="num-input" data-format="int" inputmode="numeric" value="0" /><span>円</span></div>
                 </div>
                 <div class="field">
-                  <label for="bonusCount">賞与支給回数（均等支給前提）</label>
+                  <label for="bonusCount"><span class="label-row">賞与支給回数（均等支給前提）<button type="button" class="info-icon" data-breakdown="infoBonusCount" aria-label="賞与支給回数の補足">i</button></span></label>
                   <div class="suffix"><input type="text" id="bonusCount" class="num-input" data-format="int" inputmode="numeric" value="1" /><span>回</span></div>
                   <div class="hint">厚年の賞与上限は1回あたりで判定します。</div>
                 </div>
@@ -398,7 +401,7 @@
                   </select>
                 </div>
                 <div class="field">
-                  <label for="insuredAge">本人年齢</label>
+                  <label for="insuredAge"><span class="label-row">本人年齢<button type="button" class="info-icon" data-breakdown="infoInsuredAge" aria-label="本人年齢の補足">i</button></span></label>
                   <div class="suffix"><input type="text" id="insuredAge" class="num-input" data-format="int" inputmode="numeric" value="45" /><span>歳</span></div>
                   <div class="hint">40歳以上64歳以下なら介護保険料率1.62%を自動加算します。</div>
                 </div>
@@ -481,10 +484,7 @@
                 <div class="field"><label for="corpSpecifiedSalesHalfYear">法人1期目上半期の課税売上高見込み</label><div class="suffix"><input type="text" id="corpSpecifiedSalesHalfYear" class="num-input" data-format="int" inputmode="numeric" value="0" /><span>円</span></div></div>
                 <div class="field"><label for="corpSpecifiedPayrollHalfYear">法人1期目上半期の給与等支払額見込み</label><div class="suffix"><input type="text" id="corpSpecifiedPayrollHalfYear" class="num-input" data-format="int" inputmode="numeric" value="0" /><span>円</span></div></div>
               </div>
-              <details class="note-disclosure">
-                <summary>判定ロジックの注意書きを表示</summary>
-                <div class="note-box">法人の1期目・2期目は、原則免税として判定します。ただし、資本金1,000万円以上、特定新規設立法人、1期目からのインボイス登録、または2期目の特定期間（通常は1期目上半期）の課税売上高や給与等支払額が1,000万円超の場合は、その期は課税として試算します。</div>
-              </details>
+              <div class="hint-inline"><button type="button" class="info-icon" data-breakdown="infoVatRule" aria-label="消費税判定ロジックの補足">i</button> 判定ロジックの注意</div>
             </div>
           </details>
 
@@ -500,10 +500,7 @@
                 <label class="check-chip"><input type="checkbox" id="consumptionTaxTiming"> 消費税のタイミングを慎重に見たい</label>
                 <label class="check-chip"><input type="checkbox" id="majorClientsNeedCorp"> 主要取引先が法人を好む</label>
               </div>
-              <details class="note-disclosure">
-                <summary>補足注意を表示</summary>
-                <div class="note-box">消費税は設立時期・資本金・特定期間・グループ関係で結論が変わりやすいため、この欄は「要精査フラグ」を立てるためのものです。</div>
-              </details>
+              <div class="hint-inline"><button type="button" class="info-icon" data-breakdown="infoVatCaution" aria-label="消費税論点の補足">i</button> 補足注意</div>
             </div>
           </details>
 
@@ -863,6 +860,16 @@
       return { deduction, basis, med, sup, care, total: med + sup + care };
     }
     function registerBreakdown(key, title, lines) { BREAKDOWNS[key] = { title, lines }; }
+    function registerInfoBreakdowns() {
+      registerBreakdown('infoBusinessProfit', '事業利益（事業主報酬控除前）の補足', ['消費税納付前のキャッシュ原資として扱います。']);
+      registerBreakdown('infoOtherDeduction', 'その他の所得控除の補足', ['生命保険料控除・小規模共済・扶養控除などを想定した入力欄です。']);
+      registerBreakdown('infoKokuhoModel', '国保モデルの補足', ['自治体差が大きいため、現在は神戸市モデルのみ搭載しています。']);
+      registerBreakdown('infoCurrentAutoCalc', '現状自動計算の注意', ['国保は神戸市の直近公表料率ベースの概算です。', '国民年金は令和8年度の月額を使用します。', '個人事業税は、青色申告特別控除を反映せず、業種区分と事業主控除290万円で概算します。']);
+      registerBreakdown('infoBonusCount', '賞与支給回数（均等支給前提）の補足', ['厚年の賞与上限は1回あたりで判定します。']);
+      registerBreakdown('infoInsuredAge', '本人年齢の補足', ['40歳以上64歳以下なら介護保険料率1.62%を自動加算します。']);
+      registerBreakdown('infoVatRule', '消費税判定ロジックの注意', ['法人の1期目・2期目は、原則免税として判定します。', '資本金1,000万円以上、特定新規設立法人、1期目からのインボイス登録で課税になる場合があります。', '2期目は特定期間（通常は1期目上半期）の課税売上高や給与等支払額が1,000万円超なら課税判定です。']);
+      registerBreakdown('infoVatCaution', '消費税論点の補足', ['消費税は設立時期・資本金・特定期間・グループ関係で結論が変わりやすいため、この欄は「要精査フラグ」を立てるためのものです。']);
+    }
     function pickState(score) { if (score >= 2) return { label: '有利', cls: 'good' }; if (score <= -2) return { label: '不利', cls: 'bad' }; return { label: '拮抗', cls: 'warn' }; }
     function pushMatrix(title, value, parent, key) {
       const div = document.createElement('div');
@@ -925,6 +932,7 @@
 
     function calculate() {
       Object.keys(BREAKDOWNS).forEach(k => delete BREAKDOWNS[k]);
+      registerInfoBreakdowns();
       const autoRates = syncAutoRates();
       const annualSales = num('annualSales');
       const businessProfit = num('businessProfit');
@@ -1347,7 +1355,7 @@
     }
 
     document.getElementById('calcBtnTop').addEventListener('click', calculate);
-    document.getElementById('calcBtnBottom').addEventListener('click', calculate);
+    document.getElementById('calcBtnBottom').addEventListener('click', () => { calculate(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
     document.getElementById('sampleBtnTop').addEventListener('click', loadSample);
     document.getElementById('sampleBtnBottom').addEventListener('click', loadSample);
     document.getElementById('resetBtnTop').addEventListener('click', resetForm);
